@@ -1,0 +1,17 @@
+<div class="admin-layout">
+  <nav class="admin-navbar">
+    <ul>
+      <li routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Dashboard</li>
+      <li routerLink="/admin/manage-users" routerLinkActive="active">Manage Users</li>
+      <li routerLink="/admin/manage-exams" routerLinkActive="active">Manage Exams</li>
+      <li routerLink="/admin/seating-overview" routerLinkActive="active">Seating Overview</li>
+      <li routerLink="/admin/script-assignment" routerLinkActive="active">Script Assignment</li>
+      <li routerLink="/admin/evaluation-monitor" routerLinkActive="active">Evaluation Monitor</li>
+      <li routerLink="/admin/settings" routerLinkActive="active">Settings</li>
+      <li routerLink="/logout">Logout</li>
+    </ul>
+  </nav>
+  <main class="admin-main">
+    <router-outlet></router-outlet>
+  </main>
+</div>
