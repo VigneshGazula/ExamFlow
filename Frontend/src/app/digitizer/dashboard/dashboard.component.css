@@ -1,0 +1,97 @@
+.digitizer-dashboard-container {
+  padding: 40px 18px 32px 18px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.digitizer-dashboard-container h1 {
+  font-size: 2.3em;
+  margin-bottom: 6px;
+  color: #065f46;
+  font-weight: 800;
+  letter-spacing: -1px;
+  text-shadow: 0 2px 8px #a7f3d044;
+}
+.dashboard-subtitle {
+  color: #047857;
+  margin-bottom: 38px;
+  font-size: 1.13em;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+}
+.dashboard-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 36px;
+}
+.dashboard-card {
+  position: relative;
+  background: rgba(255,255,255,0.9);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px 0 rgba(16,185,129,0.13);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 32px 24px 32px 20px;
+  min-height: 120px;
+  cursor: pointer;
+  border: 1.5px solid #d1fae5;
+  overflow: hidden;
+  transition: box-shadow 0.18s, border 0.18s, transform 0.15s, background 0.18s;
+  backdrop-filter: blur(8px);
+  background-image: linear-gradient(120deg, #f0fdf4 0%, #d1fae5 100%);
+}
+.dashboard-card::before {
+  content: '';
+  position: absolute;
+  top: -40px; left: -40px;
+  width: 110px; height: 110px;
+  background: radial-gradient(circle, #6ee7b755 0%, #fff0 70%);
+  z-index: 0;
+}
+.dashboard-card:hover {
+  box-shadow: 0 10px 32px 0 #05966933, 0 2px 10px #6ee7b722;
+  border: 1.5px solid #05966999;
+  transform: translateY(-4px) scale(1.025);
+  background: rgba(255,255,255,0.97);
+  background-image: linear-gradient(120deg, #bbf7d0 0%, #f0fdf4 100%);
+}
+.dashboard-icon {
+  font-size: 2.3em;
+  background: linear-gradient(135deg, #059669 30%, #6ee7b7 100%);
+  color: #fff;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px #6ee7b722;
+  flex-shrink: 0;
+  border: 2.5px solid #d1fae5;
+  z-index: 1;
+}
+.dashboard-card h2 {
+  font-size: 1.15em;
+  margin-bottom: 7px;
+  color: #047857;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.dashboard-card p {
+  color: #047857;
+  margin: 0;
+  font-size: 1em;
+  font-weight: 400;
+}
+@media (max-width: 900px) {
+  .dashboard-summary {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+  .digitizer-dashboard-container {
+    padding: 16px 2px;
+  }
+  .dashboard-card {
+    padding: 22px 10px 22px 6px;
+  }
+}

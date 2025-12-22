@@ -13,13 +13,13 @@ import { Router } from '@angular/router';
 })
 
 export class LoginComponent {
-  userType: 'student' | 'teacher' | 'admin' = 'student';
+  userType: 'student' | 'teacher' | 'admin' | 'digitiser' = 'student';
   email: string = '';
   password: string = '';
 
   constructor(private router: Router) {}
 
-  selectUserType(type: 'student' | 'teacher' | 'admin') {
+  selectUserType(type: 'student' | 'teacher' | 'admin' | 'digitiser') {
     this.userType = type;
   }
 
@@ -32,6 +32,12 @@ export class LoginComponent {
     
     if (this.userType === 'student') {
       this.router.navigate(['/student']);
+    } else if (this.userType === 'digitiser') {
+      this.router.navigate(['/digitizer']);
+    } else if(this.userType === 'teacher') {
+      this.router.navigate(['/faculty']);
+    } else if(this.userType === 'admin') {
+      this.router.navigate(['/admin']);
     }
   }
 }

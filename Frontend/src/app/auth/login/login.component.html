@@ -21,6 +21,14 @@
           <button 
             type="button"
             class="user-type-btn" 
+            [class.active]="userType === 'digitiser'"
+            (click)="selectUserType('digitiser')">
+            <span class="icon">📝</span>
+            <span>Exam Script Digitiser</span>
+          </button>
+          <button 
+            type="button"
+            class="user-type-btn" 
             [class.active]="userType === 'teacher'"
             (click)="selectUserType('teacher')">
             <span class="icon">👨‍🏫</span>

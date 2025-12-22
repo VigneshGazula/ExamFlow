@@ -11,5 +11,13 @@ export const routes: Routes = [
   {
     path: 'student',
     loadChildren: () => import('./student/student.module').then(m => m.StudentModule)
+  },
+  {
+    path: 'digitizer',
+    loadChildren: () => import('./digitizer/digitizer.module').then(m => m.DigitizerModule)
+  },
+  {
+    path: 'faculty',
+    loadChildren: () => import('./faculty/faculty.module').then(m => m.FacultyModule)
   }
 ];

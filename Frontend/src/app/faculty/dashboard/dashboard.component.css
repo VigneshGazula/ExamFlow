@@ -1,0 +1,94 @@
+.faculty-dashboard-container {
+  padding: 40px 18px 32px 18px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.faculty-dashboard-container h1 {
+  font-size: 2.3em;
+  margin-bottom: 6px;
+  color: #7c3aed;
+  font-weight: 800;
+  letter-spacing: -1px;
+  text-shadow: 0 2px 8px #ede9fe44;
+}
+.faculty-dashboard-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 36px;
+}
+.faculty-dashboard-card {
+  position: relative;
+  background: rgba(255,255,255,0.92);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px 0 rgba(124,58,237,0.13);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 32px 24px 32px 20px;
+  min-height: 120px;
+  cursor: pointer;
+  border: 1.5px solid #ede9fe;
+  overflow: hidden;
+  transition: box-shadow 0.18s, border 0.18s, transform 0.15s, background 0.18s;
+  backdrop-filter: blur(8px);
+  background-image: linear-gradient(120deg, #f5f3ff 0%, #ede9fe 100%);
+}
+.faculty-dashboard-card::before {
+  content: '';
+  position: absolute;
+  top: -40px; left: -40px;
+  width: 110px; height: 110px;
+  background: radial-gradient(circle, #c4b5fd55 0%, #fff0 70%);
+  z-index: 0;
+}
+.faculty-dashboard-card:hover {
+  box-shadow: 0 10px 32px 0 #7c3aed33, 0 2px 10px #a78bfa22;
+  border: 1.5px solid #7c3aed99;
+  transform: translateY(-4px) scale(1.025);
+  background: rgba(255,255,255,0.97);
+  background-image: linear-gradient(120deg, #c7d2fe 0%, #f5f3ff 100%);
+}
+.dashboard-icon {
+  font-size: 2.3em;
+  background: linear-gradient(135deg, #7c3aed 30%, #a78bfa 100%);
+  color: #fff;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px #a78bfa22;
+  flex-shrink: 0;
+  border: 2.5px solid #ede9fe;
+  z-index: 1;
+}
+.faculty-dashboard-card h2 {
+  font-size: 1.15em;
+  margin-bottom: 7px;
+  color: #7c3aed;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.faculty-dashboard-card p, .faculty-dashboard-card ul {
+  color: #6d28d9;
+  margin: 0;
+  font-size: 1em;
+  font-weight: 400;
+}
+.faculty-dashboard-card ul {
+  padding-left: 18px;
+  margin-top: 6px;
+}
+@media (max-width: 900px) {
+  .faculty-dashboard-summary {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+  .faculty-dashboard-container {
+    padding: 16px 2px;
+  }
+  .faculty-dashboard-card {
+    padding: 22px 10px 22px 6px;
+  }
+}
