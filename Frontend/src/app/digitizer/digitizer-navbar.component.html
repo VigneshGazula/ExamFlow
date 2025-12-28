@@ -1,0 +1,14 @@
+<div class="digitizer-layout">
+  <nav class="digitizer-navbar">
+    <ul>
+      <li routerLink="/digitizer" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Dashboard</li>
+      <li routerLink="/digitizer/upload-script" routerLinkActive="active">Upload Script</li>
+      <li routerLink="/digitizer/upload-history" routerLinkActive="active">Upload History</li>
+      <li routerLink="/digitizer/profile" routerLinkActive="active">Profile</li>
+      <li routerLink="/logout">Logout</li>
+    </ul>
+  </nav>
+  <main class="digitizer-main">
+    <router-outlet></router-outlet>
+  </main>
+</div>

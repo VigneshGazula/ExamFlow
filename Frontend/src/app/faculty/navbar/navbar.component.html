@@ -1,0 +1,15 @@
+<div class="faculty-layout">
+  <nav class="faculty-navbar">
+    <ul>
+      <li routerLink="/faculty" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Dashboard</li>
+      <li routerLink="/faculty/exam-schedule" routerLinkActive="active">Exam Schedule</li>
+      <li routerLink="/faculty/invigilation" routerLinkActive="active">Invigilation Duties</li>
+      <li routerLink="/faculty/evaluation" routerLinkActive="active">Evaluation</li>
+      <li routerLink="/faculty/profile" routerLinkActive="active">Profile</li>
+      <li routerLink="/logout">Logout</li>
+    </ul>
+  </nav>
+  <main class="faculty-main">
+    <router-outlet></router-outlet>
+  </main>
+</div>

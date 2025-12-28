@@ -1,0 +1,17 @@
+<div class="student-layout">
+  <nav class="student-navbar">
+    <ul>
+      <li routerLink="/student" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Dashboard</li>
+      <li routerLink="/student/schedule" routerLinkActive="active">Academic Schedule</li>
+      <li routerLink="/student/hall-ticket" routerLinkActive="active">Hall Ticket</li>
+      <li routerLink="/student/seating" routerLinkActive="active">Seating Arrangement</li>
+      <li routerLink="/student/mind-map" routerLinkActive="active">Mind Map & Study Support</li>
+      <li routerLink="/student/events" routerLinkActive="active">Events</li>
+      <li routerLink="/student/profile" routerLinkActive="active">Profile</li>
+      <li routerLink="/logout">Logout</li>
+    </ul>
+  </nav>
+  <main class="student-main">
+    <router-outlet></router-outlet>
+  </main>
+</div>

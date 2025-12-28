@@ -1,0 +1,86 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>Welcome Back</h1>
+      <p>Sign in to continue to ExamFlow</p>
+    </div>
+
+    <form class="login-form" (ngSubmit)="onSubmit()">
+      <!-- User Type Selection -->
+      <div class="form-group">
+        <label>Login As</label>
+        <div class="user-type-buttons">
+          <button 
+            type="button"
+            class="user-type-btn" 
+            [class.active]="userType === 'student'"
+            (click)="selectUserType('student')">
+            <span class="icon">👨‍🎓</span>
+            <span>Student</span>
+          </button>
+          <button 
+            type="button"
+            class="user-type-btn" 
+            [class.active]="userType === 'digitiser'"
+            (click)="selectUserType('digitiser')">
+            <span class="icon">📝</span>
+            <span>Exam Script Digitiser</span>
+          </button>
+          <button 
+            type="button"
+            class="user-type-btn" 
+            [class.active]="userType === 'teacher'"
+            (click)="selectUserType('teacher')">
+            <span class="icon">👨‍🏫</span>
+            <span>Teacher</span>
+          </button>
+          <button 
+            type="button"
+            class="user-type-btn" 
+            [class.active]="userType === 'admin'"
+            (click)="selectUserType('admin')">
+            <span class="icon">👤</span>
+            <span>Admin</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email"
+          [(ngModel)]="email"
+          placeholder="Enter your email"
+          required>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password"
+          [(ngModel)]="password"
+          placeholder="Enter your password"
+          required>
+      </div>
+
+      <!-- Forgot Password -->
+      <div class="form-options">
+        <a href="#" class="forgot-password">Forgot Password?</a>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="btn-submit">Login</button>
+
+      <!-- Sign Up Link -->
+      <div class="signup-link">
+        Don't have an account? <a routerLink="/signup">Sign up</a>
+      </div>
+    </form>
+  </div>
+</div>
