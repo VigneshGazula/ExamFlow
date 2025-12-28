@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "p9GfaPfEkBYsvXdU0XBan7W6ghZWM3VufuRp6pqYP/0=",
+  "Source": "ExamFlowWebApi",
+  "BasePath": "_content/ExamFlowWebApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
