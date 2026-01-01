@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
+import { AuthApiService, LoginRequest, AuthResponse } from '../auth-api.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
-import { Router } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -11,33 +11,56 @@ import { Router } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-
 export class LoginComponent {
-  userType: 'student' | 'teacher' | 'admin' | 'digitiser' = 'student';
-  email: string = '';
+  userId: string = '';
   password: string = '';
+  loginAs: 'Student' | 'Faculty' | 'Admin' | 'Digitizer' = 'Student';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authApi: AuthApiService) {}
 
-  selectUserType(type: 'student' | 'teacher' | 'admin' | 'digitiser') {
-    this.userType = type;
-  }
-
-  onSubmit() {
-    console.log('Login submitted:', {
-      userType: this.userType,
-      email: this.email,
-      password: this.password
-    });
-    
-    if (this.userType === 'student') {
-      this.router.navigate(['/student']);
-    } else if (this.userType === 'digitiser') {
-      this.router.navigate(['/digitizer']);
-    } else if(this.userType === 'teacher') {
-      this.router.navigate(['/faculty']);
-    } else if(this.userType === 'admin') {
-      this.router.navigate(['/admin']);
+  onSubmit(): void {
+    if (!this.userId.trim() || !this.password.trim()) {
+      alert('Please enter both User ID and Password.');
+      return;
     }
+
+    const data: LoginRequest = {
+      userId: this.userId,
+      password: this.password,
+      loginAs: this.loginAs
+    };
+
+    this.authApi.login(data).subscribe({
+      next: (res: AuthResponse) => {
+        if (res && res.token && res.role) {
+          this.authApi.storeToken(res.token);
+          this.authApi.storeRole(res.role);
+          
+          // Navigate based on role
+          if (res.role === 'Student') {
+            this.router.navigate(['/student/dashboard']);
+          } else if (res.role === 'Faculty') {
+            this.router.navigate(['/faculty/dashboard']);
+          } else if (res.role === 'Admin') {
+            this.router.navigate(['/admin/dashboard']);
+          } else if (res.role === 'Digitizer') {
+            this.router.navigate(['/digitizer/dashboard']);
+          }
+        }
+      },
+      error: (err: any) => {
+        const errorMessage = err.error?.message || 'Unknown error occurred';
+        
+        if (errorMessage.includes('User not found')) {
+          alert('User not found. Please sign up first.');
+        } else if (errorMessage.includes('Incorrect password')) {
+          alert('Incorrect password.');
+        } else if (errorMessage.includes('Selected role does not match')) {
+          alert('Selected role does not match this user.');
+        } else {
+          alert('Login failed: ' + errorMessage);
+        }
+      }
+    });
   }
 }

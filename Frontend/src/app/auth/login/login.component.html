@@ -6,54 +6,26 @@
     </div>
 
     <form class="login-form" (ngSubmit)="onSubmit()">
-      <!-- User Type Selection -->
+      <!-- Login As Dropdown -->
       <div class="form-group">
-        <label>Login As</label>
-        <div class="user-type-buttons">
-          <button 
-            type="button"
-            class="user-type-btn" 
-            [class.active]="userType === 'student'"
-            (click)="selectUserType('student')">
-            <span class="icon">👨‍🎓</span>
-            <span>Student</span>
-          </button>
-          <button 
-            type="button"
-            class="user-type-btn" 
-            [class.active]="userType === 'digitiser'"
-            (click)="selectUserType('digitiser')">
-            <span class="icon">📝</span>
-            <span>Exam Script Digitiser</span>
-          </button>
-          <button 
-            type="button"
-            class="user-type-btn" 
-            [class.active]="userType === 'teacher'"
-            (click)="selectUserType('teacher')">
-            <span class="icon">👨‍🏫</span>
-            <span>Teacher</span>
-          </button>
-          <button 
-            type="button"
-            class="user-type-btn" 
-            [class.active]="userType === 'admin'"
-            (click)="selectUserType('admin')">
-            <span class="icon">👤</span>
-            <span>Admin</span>
-          </button>
-        </div>
+        <label for="loginAs">Login As</label>
+        <select id="loginAs" name="loginAs" [(ngModel)]="loginAs" required>
+          <option value="Student">Student</option>
+          <option value="Faculty">Faculty</option>
+          <option value="Admin">Admin</option>
+          <option value="Digitizer">Digitizer</option>
+        </select>
       </div>
 
-      <!-- Email -->
+      <!-- UserId -->
       <div class="form-group">
-        <label for="email">Email</label>
+        <label for="userId">User ID</label>
         <input 
-          type="email" 
-          id="email" 
-          name="email"
-          [(ngModel)]="email"
-          placeholder="Enter your email"
+          type="text" 
+          id="userId" 
+          name="userId"
+          [(ngModel)]="userId"
+          placeholder="Enter your user ID"
           required>
       </div>
 

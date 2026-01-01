@@ -2,10 +2,25 @@
   <div class="signup-card">
     <div class="signup-header">
       <h1>Create Your Account</h1>
-      <p>Join ExamFlow as a Student</p>
+      <p>Join ExamFlow - Your role is determined by your User ID prefix</p>
     </div>
 
     <form class="signup-form" (ngSubmit)="onSubmit()">
+      <!-- UserId -->
+      <div class="form-group">
+        <label for="userId">User ID</label>
+        <input 
+          type="text" 
+          id="userId" 
+          name="userId"
+          [(ngModel)]="userId"
+          placeholder="e.g., st001 (Student), fc001 (Faculty)"
+          required>
+        <small style="color: #64748b; font-size: 0.8rem;">
+          Use: st (Student), fc (Faculty), ad (Admin), dg (Digitizer)
+        </small>
+      </div>
+
       <!-- Full Name -->
       <div class="form-group">
         <label for="fullName">Full Name</label>
@@ -30,17 +45,6 @@
           required>
       </div>
 
-      <!-- Student ID -->
-      <div class="form-group">
-        <label for="studentId">Student ID</label>
-        <input 
-          type="text" 
-          id="studentId" 
-          name="studentId"
-          [(ngModel)]="studentId"
-          placeholder="Enter your student ID"
-          required>
-      </div>
 
       <!-- Password -->
       <div class="form-group">
