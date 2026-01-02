@@ -2,23 +2,19 @@
   <div class="signup-card">
     <div class="signup-header">
       <h1>Create Your Account</h1>
-      <p>Join ExamFlow - Your role is determined by your User ID prefix</p>
+      <p>Join ExamFlow - Select your role to get started</p>
     </div>
 
     <form class="signup-form" (ngSubmit)="onSubmit()">
-      <!-- UserId -->
+      <!-- Role Selection -->
       <div class="form-group">
-        <label for="userId">User ID</label>
-        <input 
-          type="text" 
-          id="userId" 
-          name="userId"
-          [(ngModel)]="userId"
-          placeholder="e.g., st001 (Student), fc001 (Faculty)"
-          required>
-        <small style="color: #64748b; font-size: 0.8rem;">
-          Use: st (Student), fc (Faculty), ad (Admin), dg (Digitizer)
-        </small>
+        <label for="role">I am a</label>
+        <select id="role" name="role" [(ngModel)]="role" required>
+          <option value="Student">Student</option>
+          <option value="Faculty">Faculty</option>
+          <option value="Admin">Admin</option>
+          <option value="Digitizer">Digitizer</option>
+        </select>
       </div>
 
       <!-- Full Name -->
@@ -44,7 +40,6 @@
           placeholder="Enter your email"
           required>
       </div>
-
 
       <!-- Password -->
       <div class="form-group">
@@ -91,5 +86,29 @@
         Already have an account? <a routerLink="/login">Login</a>
       </div>
     </form>
+  </div>
+
+  <!-- User ID Display Dialog -->
+  <div class="modal-overlay" *ngIf="showUserIdDialog">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2>✅ Signup Successful!</h2>
+      </div>
+      <div class="modal-body">
+        <p class="success-message">Your account has been created successfully.</p>
+        <div class="userid-display">
+          <label>Your User ID:</label>
+          <div class="userid-value">{{ generatedUserId }}</div>
+        </div>
+        <p class="instruction">
+          <strong>⚠️ Important:</strong> Please save this User ID. You will need it to login.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" (click)="closeDialogAndNavigate()">
+          Continue to Login
+        </button>
+      </div>
+    </div>
   </div>
 </div>

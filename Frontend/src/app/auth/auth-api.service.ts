@@ -9,11 +9,17 @@ export interface LoginRequest {
 }
 
 export interface SignupRequest {
-  userId: string;
   fullName: string;
   email: string;
   password: string;
   confirmPassword: string;
+  role: string;
+}
+
+export interface SignupResponse {
+  message: string;
+  userId: string;
+  role: string;
 }
 
 export interface AuthResponse {
@@ -35,8 +41,8 @@ export class AuthApiService {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, data);
   }
 
-  signup(data: SignupRequest): Observable<any> {
-    return this.http.post(`${this.apiUrl}/signup`, data);
+  signup(data: SignupRequest): Observable<SignupResponse> {
+    return this.http.post<SignupResponse>(`${this.apiUrl}/signup`, data);
   }
 
   storeToken(token: string): void {

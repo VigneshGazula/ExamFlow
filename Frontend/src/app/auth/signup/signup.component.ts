@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthApiService, SignupRequest } from '../auth-api.service';
+import { AuthApiService, SignupRequest, SignupResponse } from '../auth-api.service';
 
 @Component({
   selector: 'app-signup',
@@ -14,15 +14,18 @@ import { AuthApiService, SignupRequest } from '../auth-api.service';
 export class SignupComponent {
   fullName: string = '';
   email: string = '';
-  userId: string = '';
   password: string = '';
   confirmPassword: string = '';
+  role: 'Student' | 'Faculty' | 'Admin' | 'Digitizer' = 'Student';
   acceptTerms: boolean = false;
+
+  showUserIdDialog: boolean = false;
+  generatedUserId: string = '';
 
   constructor(private authApi: AuthApiService, private router: Router) {}
 
   onSubmit(): void {
-    if (!this.userId.trim() || !this.fullName.trim() || !this.email.trim() || !this.password.trim()) {
+    if (!this.fullName.trim() || !this.email.trim() || !this.password.trim()) {
       alert('Please fill in all fields.');
       return;
     }
@@ -38,31 +41,36 @@ export class SignupComponent {
     }
 
     const data: SignupRequest = {
-      userId: this.userId,
       fullName: this.fullName,
       email: this.email,
       password: this.password,
-      confirmPassword: this.confirmPassword
+      confirmPassword: this.confirmPassword,
+      role: this.role
     };
 
     this.authApi.signup(data).subscribe({
-      next: (res) => {
-        alert('Signup successful! Please login.');
-        this.router.navigate(['/login']);
+      next: (res: SignupResponse) => {
+        this.generatedUserId = res.userId;
+        this.showUserIdDialog = true;
       },
       error: (err) => {
         const errorMessage = err.error?.message || 'Unknown error occurred';
         
-        if (errorMessage.includes('User already exists')) {
-          alert('User already exists. Please login or use a different User ID.');
+        if (errorMessage.includes('Email already exists')) {
+          alert('Email already exists. Please login or use a different email.');
         } else if (errorMessage.includes('Password and Confirm Password do not match')) {
           alert('Passwords do not match!');
-        } else if (errorMessage.includes('Invalid User ID format')) {
-          alert('Invalid User ID format. Use prefixes: st (Student), fc (Faculty), ad (Admin), dg (Digitizer).');
+        } else if (errorMessage.includes('Invalid role')) {
+          alert('Invalid role selected.');
         } else {
           alert('Signup failed: ' + errorMessage);
         }
       }
     });
+  }
+
+  closeDialogAndNavigate(): void {
+    this.showUserIdDialog = false;
+    this.router.navigate(['/login']);
   }
 }
