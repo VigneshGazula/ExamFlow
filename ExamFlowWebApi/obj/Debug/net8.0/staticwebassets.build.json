@@ -1,12 +1,1 @@
-{
-  "Version": 1,
-  "Hash": "p9GfaPfEkBYsvXdU0XBan7W6ghZWM3VufuRp6pqYP/0=",
-  "Source": "ExamFlowWebApi",
-  "BasePath": "_content/ExamFlowWebApi",
-  "Mode": "Default",
-  "ManifestType": "Build",
-  "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": [],
-  "Endpoints": []
-}
+{"Version":1,"Hash":"sF7yv/5xkOLwF0JMSAgbg/1FdVkXtsbamInBbAdSuTU=","Source":"ExamFlowWebApi","BasePath":"/","Mode":"Root","ManifestType":"Build","ReferencedProjectsConfiguration":[],"DiscoveryPatterns":[],"Assets":[],"Endpoints":[]}

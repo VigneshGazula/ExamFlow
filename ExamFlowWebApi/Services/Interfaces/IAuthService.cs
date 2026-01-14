@@ -4,7 +4,7 @@ namespace ExamFlowWebApi.Services.Interfaces
 {
     public interface IAuthService
     { 
-        void signUp(SignUpDTORequest signUpDTORequest);
+        SignUpResponseDTO signUp(SignUpDTORequest signUpDTORequest);
         AuthResponseDTO signIn(LoginDTORequest loginDTORequest);
     }
 }

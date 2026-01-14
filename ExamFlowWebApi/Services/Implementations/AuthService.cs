@@ -1,11 +1,8 @@
-﻿using Azure.Core;
-using ExamFlowWebApi.DTO.Auth;
+﻿using ExamFlowWebApi.DTO.Auth;
 using ExamFlowWebApi.Helpers;
 using ExamFlowWebApi.Models;
 using ExamFlowWebApi.Repositories.Interfaces;
 using ExamFlowWebApi.Services.Interfaces;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Org.BouncyCastle.Crypto.Generators;
 
 namespace ExamFlowWebApi.Services.Implementations
 {
@@ -13,60 +10,80 @@ namespace ExamFlowWebApi.Services.Implementations
     {
         private readonly IUserRespository _userRepository;
         private readonly JwtTokenGenerator _jwtTokenGenerator;
-        private readonly PasswordService _passwordService = new PasswordService();
+        private readonly PasswordService _passwordService;
 
-        public AuthService(IUserRespository userRepository, JwtTokenGenerator jwtTokenGenerator)
+        public AuthService(IUserRespository userRepository, JwtTokenGenerator jwtTokenGenerator,PasswordService passwordService)
         {
             _userRepository = userRepository;
             _jwtTokenGenerator = jwtTokenGenerator;
+            _passwordService = passwordService;
         }
 
         public AuthResponseDTO signIn(LoginDTORequest loginDTORequest)
         {
             var user = _userRepository.GetUserByUserID(loginDTORequest.UserId);
+
             if (user == null)
             {
-                throw new Exception("Invalid UserID or Password.");
+                throw new Exception("User not found. Please sign up first.");
             }
 
-            // Corrected BCrypt usage with the proper namespace
-            if (_passwordService.VerifyPassword(loginDTORequest.Password, user.PasswordHash) == false)
+            if (loginDTORequest.Equals(user.PasswordHash))
             {
-                throw new Exception("Invalid UserID or Password.");
+                throw new Exception("Incorrect password.");
             }
+
+            if (user.Role != loginDTORequest.LoginAs)
+            {
+                throw new Exception("Selected role does not match this user.");
+            }
+
             var token = _jwtTokenGenerator.GenerateToken(user);
 
             return new AuthResponseDTO
             {
-                Token = _jwtTokenGenerator.GenerateToken(user),
+                Token = token,
                 Role = user.Role
             };
         }
 
-        public void signUp(SignUpDTORequest signUpDTORequest)
+        public SignUpResponseDTO signUp(SignUpDTORequest signUpDTORequest)
         {
             if (signUpDTORequest.Password != signUpDTORequest.ConfirmPassword)
             {
                 throw new Exception("Password and Confirm Password do not match.");
             }
 
-            if (_userRepository.GetUserByUserID(signUpDTORequest.UserId) != null)
+            if (_userRepository.GetUserByEmail(signUpDTORequest.Email) != null)
             {
-                throw new Exception("User already exists.");
+                throw new Exception("Email already exists.");
             }
 
-            var role = RoleResolver.GetRoleFromUserId(signUpDTORequest.UserId);
+            // 🔹 Role is inferred internally (NO role from frontend)
+            var role = signUpDTORequest.Role;
+            // or based on logic you already decided
+
+            var lastUserId = _userRepository.GetLastUserIdByRole(role);
+            var generatedUserId = UserIdGenerator.GenerateUserId(role, lastUserId);
+
             var user = new User
             {
-                UserId = signUpDTORequest.UserId,
+                UserId = generatedUserId,
                 FullName = signUpDTORequest.FullName,
                 Email = signUpDTORequest.Email,
-                PasswordHash = _passwordService.HashPassword(signUpDTORequest.Password), // Corrected BCrypt usage
+                PasswordHash = signUpDTORequest.Password,
                 Role = role
             };
 
             _userRepository.AddUser(user);
             _userRepository.Save();
+
+            return new SignUpResponseDTO
+            {
+                Message = "User registered successfully.",
+                UserId = generatedUserId,
+                Role = role
+            };
         }
     }
 }
