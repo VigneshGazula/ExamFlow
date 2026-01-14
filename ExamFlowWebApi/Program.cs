@@ -24,6 +24,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<IUserRespository, UserRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IStudentProfileService, StudentProfileService>();
 builder.Services.AddSingleton<JwtTokenGenerator>();
 builder.Services.AddScoped<PasswordService>();
 
@@ -69,12 +70,16 @@ builder.Services.AddAuthorization();
 
 // -------------------- CORS --------------------
 
+var frontendUrl = builder.Configuration.GetSection("AppSettings")["FrontendUrl"] 
+    ?? "http://localhost:4200";
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
-        policy.AllowAnyOrigin()
+        policy.WithOrigins(frontendUrl)
               .AllowAnyMethod()
               .AllowAnyHeader()
+              .AllowCredentials()
     );
 });
 

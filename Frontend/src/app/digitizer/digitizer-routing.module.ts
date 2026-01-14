@@ -11,7 +11,8 @@ const routes: Routes = [
     path: '',
     component: DigitizerNavbarComponent,
     children: [
-      { path: '', component: DashboardComponent },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: DashboardComponent },
       { path: 'upload-script', component: UploadScriptComponent },
       { path: 'upload-history', component: UploadHistoryComponent },
       { path: 'profile', component: ProfileComponent }

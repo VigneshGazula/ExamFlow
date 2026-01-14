@@ -14,7 +14,8 @@ const routes: Routes = [
     path: '',
     component: NavbarComponent,
     children: [
-      { path: '', component: DashboardComponent },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: DashboardComponent },
       { path: 'manage-users', component: ManageUsersComponent },
       { path: 'manage-exams', component: ManageExamsComponent },
       { path: 'seating-overview', component: SeatingOverviewComponent },

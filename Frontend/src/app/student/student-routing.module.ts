@@ -8,13 +8,21 @@ import { SeatingComponent } from './seating/seating.component';
 import { MindMapComponent } from './mind-map/mind-map.component';
 import { EventsComponent } from './events/events.component';
 import { ProfileComponent } from './profile/profile.component';
+import { ProfileCompletionComponent } from './profile-completion/profile-completion.component';
+import { ProfileCompletionGuard } from '../guards/profile-completion.guard';
 
 const routes: Routes = [
   {
+    path: 'complete-profile',
+    component: ProfileCompletionComponent
+  },
+  {
     path: '',
     component: StudentNavbarComponent,
+    canActivate: [ProfileCompletionGuard],
     children: [
-      { path: '', component: DashboardComponent },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: DashboardComponent },
       { path: 'schedule', component: AcademicScheduleComponent },
       { path: 'hall-ticket', component: HallTicketComponent },
       { path: 'seating', component: SeatingComponent },

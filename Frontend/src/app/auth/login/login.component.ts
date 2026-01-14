@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthApiService, LoginRequest, AuthResponse } from '../auth-api.service';
+import { StudentProfileService } from '../../services/student-profile.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
@@ -16,7 +17,11 @@ export class LoginComponent {
   password: string = '';
   loginAs: 'Student' | 'Faculty' | 'Admin' | 'Digitizer' = 'Student';
 
-  constructor(private router: Router, private authApi: AuthApiService) {}
+  constructor(
+    private router: Router, 
+    private authApi: AuthApiService,
+    private studentProfileService: StudentProfileService
+  ) {}
 
   onSubmit(): void {
     if (!this.userId.trim() || !this.password.trim()) {
@@ -38,7 +43,8 @@ export class LoginComponent {
           
           // Navigate based on role
           if (res.role === 'Student') {
-            this.router.navigate(['/student/dashboard']);
+            // Check if student has completed profile
+            this.checkStudentProfile();
           } else if (res.role === 'Faculty') {
             this.router.navigate(['/faculty/dashboard']);
           } else if (res.role === 'Admin') {
@@ -63,4 +69,24 @@ export class LoginComponent {
       }
     });
   }
+
+  private checkStudentProfile(): void {
+    this.studentProfileService.checkProfileStatus().subscribe({
+      next: (status) => {
+        if (status.hasProfile) {
+          // Profile exists, go to dashboard
+          this.router.navigate(['/student/dashboard']);
+        } else {
+          // No profile, redirect to profile completion
+          this.router.navigate(['/student/complete-profile']);
+        }
+      },
+      error: (err) => {
+        console.error('Error checking profile status', err);
+        // On error, still redirect to dashboard
+        this.router.navigate(['/student/dashboard']);
+      }
+    });
+  }
 }
+

@@ -8,12 +8,12 @@ namespace ExamFlowWebApi.Helpers
 {
     public class JwtTokenGenerator
     {
-            private readonly IConfiguration _config;
+        private readonly IConfiguration _config;
 
-            public JwtTokenGenerator(IConfiguration config)
-            {
-                _config = config;
-            }
+        public JwtTokenGenerator(IConfiguration config)
+        {
+            _config = config;
+        }
 
         public string GenerateToken(User user)
         {
@@ -28,7 +28,9 @@ namespace ExamFlowWebApi.Helpers
 
             var claims = new[]
             {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.UserId),
+                new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role)
             };
 
@@ -44,5 +46,5 @@ namespace ExamFlowWebApi.Helpers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-        }
+    }
 }

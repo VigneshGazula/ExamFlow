@@ -12,7 +12,8 @@ const routes: Routes = [
     path: '',
     component: NavbarComponent,
     children: [
-      { path: '', component: DashboardComponent },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: DashboardComponent },
       { path: 'exam-schedule', component: ExamScheduleComponent },
       { path: 'invigilation', component: InvigilationComponent },
       { path: 'evaluation', component: EvaluationComponent },
