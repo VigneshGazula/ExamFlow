@@ -10,6 +10,8 @@ import { SeatingOverviewComponent } from './seating-overview/seating-overview.co
 import { ScriptAssignmentComponent } from './script-assignment/script-assignment.component';
 import { EvaluationMonitorComponent } from './evaluation-monitor/evaluation-monitor.component';
 import { SettingsComponent } from './settings/settings.component';
+import { ExamSeriesFormComponent } from './exam-series-form/exam-series-form.component';
+import { BranchScheduleListComponent } from './branch-schedule-list/branch-schedule-list.component';
 
 @NgModule({
   imports: [
@@ -22,7 +24,9 @@ import { SettingsComponent } from './settings/settings.component';
     SeatingOverviewComponent,
     ScriptAssignmentComponent,
     EvaluationMonitorComponent,
-    SettingsComponent
+    SettingsComponent,
+    ExamSeriesFormComponent,
+    BranchScheduleListComponent
   ]
 })
 export class AdminModule { }

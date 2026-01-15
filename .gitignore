@@ -1,0 +1,11 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/ExamFlowWebApi/IMPLEMENTATION_COMPLETE_SUMMARY.md
+/ExamFlowWebApi/IMPLEMENTATION_SUMMARY.md
+/ExamFlowWebApi/QUICK_START.md
+/ExamFlowWebApi/SCHEDULE_EXAMS_IMPLEMENTATION.md
+/ExamFlowWebApi/STUDENT_PROFILE_MIGRATION.md
+/ExamFlowWebApi/UI_DESIGN_DOCUMENTATION.md
+/ExamFlowWebApi/appsettings.Development.json

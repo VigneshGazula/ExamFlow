@@ -8,6 +8,8 @@ import { SeatingOverviewComponent } from './seating-overview/seating-overview.co
 import { ScriptAssignmentComponent } from './script-assignment/script-assignment.component';
 import { EvaluationMonitorComponent } from './evaluation-monitor/evaluation-monitor.component';
 import { SettingsComponent } from './settings/settings.component';
+import { ExamSeriesFormComponent } from './exam-series-form/exam-series-form.component';
+import { BranchScheduleListComponent } from './branch-schedule-list/branch-schedule-list.component';
 
 const routes: Routes = [
   {
@@ -18,6 +20,8 @@ const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'manage-users', component: ManageUsersComponent },
       { path: 'manage-exams', component: ManageExamsComponent },
+      { path: 'manage-exams/create-series', component: ExamSeriesFormComponent },
+      { path: 'manage-exams/series/:id/schedule', component: BranchScheduleListComponent },
       { path: 'seating-overview', component: SeatingOverviewComponent },
       { path: 'script-assignment', component: ScriptAssignmentComponent },
       { path: 'evaluation-monitor', component: EvaluationMonitorComponent },

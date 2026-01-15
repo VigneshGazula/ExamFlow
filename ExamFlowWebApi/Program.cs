@@ -25,6 +25,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IUserRespository, UserRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IStudentProfileService, StudentProfileService>();
+builder.Services.AddScoped<IExamService, ExamService>();
 builder.Services.AddSingleton<JwtTokenGenerator>();
 builder.Services.AddScoped<PasswordService>();
 

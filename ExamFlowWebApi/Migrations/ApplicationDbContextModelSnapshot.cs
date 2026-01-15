@@ -22,6 +22,88 @@ namespace ExamFlowWebApi.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("ExamFlowWebApi.Models.Exam", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Branch")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<TimeOnly>("EndTime")
+                        .HasColumnType("time without time zone");
+
+                    b.Property<DateOnly>("ExamDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("ExamSeriesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsHoliday")
+                        .HasColumnType("boolean");
+
+                    b.Property<TimeOnly>("StartTime")
+                        .HasColumnType("time without time zone");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExamSeriesId", "Branch", "ExamDate")
+                        .IsUnique();
+
+                    b.ToTable("Exams");
+                });
+
+            modelBuilder.Entity("ExamFlowWebApi.Models.ExamSeries", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.PrimitiveCollection<string>("Branches")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateOnly>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("ExamType")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ExamSeries");
+                });
+
             modelBuilder.Entity("ExamFlowWebApi.Models.StudentProfile", b =>
                 {
                     b.Property<int>("Id")
@@ -100,6 +182,17 @@ namespace ExamFlowWebApi.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("ExamFlowWebApi.Models.Exam", b =>
+                {
+                    b.HasOne("ExamFlowWebApi.Models.ExamSeries", "ExamSeries")
+                        .WithMany("Exams")
+                        .HasForeignKey("ExamSeriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ExamSeries");
+                });
+
             modelBuilder.Entity("ExamFlowWebApi.Models.StudentProfile", b =>
                 {
                     b.HasOne("ExamFlowWebApi.Models.User", "Student")
@@ -109,6 +202,11 @@ namespace ExamFlowWebApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("ExamFlowWebApi.Models.ExamSeries", b =>
+                {
+                    b.Navigation("Exams");
                 });
 
             modelBuilder.Entity("ExamFlowWebApi.Models.User", b =>

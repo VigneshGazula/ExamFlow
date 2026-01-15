@@ -12,6 +12,8 @@ namespace ExamFlowWebApi.Entities
 
         public DbSet<User> Users { get; set; }
         public DbSet<StudentProfile> StudentProfiles { get; set; }
+        public DbSet<ExamSeries> ExamSeries { get; set; }
+        public DbSet<Exam> Exams { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -49,6 +51,22 @@ namespace ExamFlowWebApi.Entities
                 .Property(sp => sp.Section)
                 .IsRequired()
                 .HasMaxLength(5);
+
+            // Configure ExamSeries
+            modelBuilder.Entity<ExamSeries>()
+                .Property(es => es.Branches)
+                .HasColumnType("jsonb");
+
+            modelBuilder.Entity<ExamSeries>()
+                .HasMany(es => es.Exams)
+                .WithOne(e => e.ExamSeries)
+                .HasForeignKey(e => e.ExamSeriesId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Configure Exam - unique constraint for one exam per branch per date
+            modelBuilder.Entity<Exam>()
+                .HasIndex(e => new { e.ExamSeriesId, e.Branch, e.ExamDate })
+                .IsUnique();
         }
     }
 }

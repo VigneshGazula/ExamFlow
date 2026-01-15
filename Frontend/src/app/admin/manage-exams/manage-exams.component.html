@@ -1,1 +1,165 @@
-<p>manage-exams works!</p>
+<div class="container-fluid py-4">
+  <!-- Header Section -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="mb-1">
+        <i class="bi bi-calendar-check-fill text-primary me-2"></i>
+        Manage Exams
+      </h2>
+      <p class="text-muted mb-0">Schedule and manage exam series for different branches</p>
+    </div>
+    <button class="btn btn-primary btn-lg" (click)="createNewSeries()">
+      <i class="bi bi-plus-circle me-2"></i>
+      Create New Exam Series
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3 text-muted">Loading exam series...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage && !isLoading" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+    {{ errorMessage }}
+    <button type="button" class="btn-close" (click)="errorMessage = ''" aria-label="Close"></button>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && !errorMessage && examSeriesList.length === 0" class="empty-state text-center py-5">
+    <div class="empty-icon mb-4">
+      <i class="bi bi-calendar-x display-1 text-muted"></i>
+    </div>
+    <h3 class="text-muted mb-3">No Exam Series Yet</h3>
+    <p class="text-muted mb-4">Get started by creating your first exam series</p>
+    <button class="btn btn-primary btn-lg" (click)="createNewSeries()">
+      <i class="bi bi-plus-circle me-2"></i>
+      Create Your First Exam Series
+    </button>
+  </div>
+
+  <!-- Exam Series List -->
+  <div *ngIf="!isLoading && !errorMessage && examSeriesList.length > 0" class="exam-series-grid">
+    <div class="row g-4">
+      <div *ngFor="let series of examSeriesList" class="col-md-6 col-lg-4">
+        <div class="card exam-series-card h-100 shadow-sm">
+          <!-- Card Header -->
+          <div class="card-header bg-gradient-primary text-white">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h5 class="card-title mb-1">{{ series.name }}</h5>
+                <span class="badge bg-white text-primary">
+                  {{ getExamTypeLabel(series.examType) }}
+                </span>
+              </div>
+              <div class="text-end">
+                <div class="year-badge">
+                  Year {{ series.year }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Body -->
+          <div class="card-body">
+            <!-- Date Range -->
+            <div class="mb-3">
+              <div class="info-item">
+                <i class="bi bi-calendar-range text-primary me-2"></i>
+                <span class="text-muted small">Date Range:</span>
+              </div>
+              <div class="ms-4">
+                <strong>{{ formatDate(series.startDate) }}</strong>
+                <i class="bi bi-arrow-right mx-2"></i>
+                <strong>{{ formatDate(series.endDate) }}</strong>
+              </div>
+            </div>
+
+            <!-- Branches -->
+            <div class="mb-3">
+              <div class="info-item">
+                <i class="bi bi-building text-primary me-2"></i>
+                <span class="text-muted small">Branches:</span>
+              </div>
+              <div class="ms-4 mt-2">
+                <div class="d-flex flex-wrap gap-1">
+                  <span 
+                    *ngFor="let branch of series.branches" 
+                    class="badge bg-light text-dark border"
+                  >
+                    {{ branch }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Created Info -->
+            <div class="created-info mt-3 pt-3 border-top">
+              <small class="text-muted">
+                <i class="bi bi-person-circle me-1"></i>
+                Created by: <strong>{{ series.createdBy }}</strong>
+              </small>
+              <br>
+              <small class="text-muted">
+                <i class="bi bi-clock me-1"></i>
+                {{ formatDate(series.createdAt) }}
+              </small>
+            </div>
+          </div>
+
+          <!-- Card Footer -->
+          <div class="card-footer bg-transparent border-top-0">
+            <div class="d-grid gap-2">
+              <button 
+                class="btn btn-primary"
+                (click)="scheduleExams(series.id)"
+              >
+                <i class="bi bi-calendar-plus me-2"></i>
+                Schedule Exams
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Card (Optional) -->
+  <div *ngIf="!isLoading && examSeriesList.length > 0" class="stats-card mt-5">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="row text-center">
+          <div class="col-md-3">
+            <div class="stat-item">
+              <h3 class="text-primary mb-0">{{ examSeriesList.length }}</h3>
+              <small class="text-muted">Total Exam Series</small>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-item">
+              <h3 class="text-success mb-0">{{ semesterExamsCount }}</h3>
+              <small class="text-muted">Semester Exams</small>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-item">
+              <h3 class="text-info mb-0">{{ midtermExamsCount }}</h3>
+              <small class="text-muted">Midterm Exams</small>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-item">
+              <h3 class="text-warning mb-0">{{ labExamsCount }}</h3>
+              <small class="text-muted">Lab Exams</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

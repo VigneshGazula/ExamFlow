@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -35,7 +36,10 @@ export interface ErrorResponse {
 export class AuthApiService {
   private apiUrl = 'http://localhost:5275/api/Auth';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   login(data: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, data);
@@ -46,23 +50,35 @@ export class AuthApiService {
   }
 
   storeToken(token: string): void {
-    localStorage.setItem('jwt', token);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('jwt', token);
+    }
   }
 
   getToken(): string | null {
-    return localStorage.getItem('jwt');
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('jwt');
+    }
+    return null;
   }
 
   storeRole(role: string): void {
-    localStorage.setItem('role', role);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('role', role);
+    }
   }
 
   getRole(): string | null {
-    return localStorage.getItem('role');
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('role');
+    }
+    return null;
   }
 
   clearAuth(): void {
-    localStorage.removeItem('jwt');
-    localStorage.removeItem('role');
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('jwt');
+      localStorage.removeItem('role');
+    }
   }
 }
