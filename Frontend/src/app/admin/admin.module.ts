@@ -12,6 +12,7 @@ import { EvaluationMonitorComponent } from './evaluation-monitor/evaluation-moni
 import { SettingsComponent } from './settings/settings.component';
 import { ExamSeriesFormComponent } from './exam-series-form/exam-series-form.component';
 import { BranchScheduleListComponent } from './branch-schedule-list/branch-schedule-list.component';
+import { BranchExamSchedulerComponent } from './branch-exam-scheduler/branch-exam-scheduler.component';
 
 @NgModule({
   imports: [
@@ -26,7 +27,8 @@ import { BranchScheduleListComponent } from './branch-schedule-list/branch-sched
     EvaluationMonitorComponent,
     SettingsComponent,
     ExamSeriesFormComponent,
-    BranchScheduleListComponent
+    BranchScheduleListComponent,
+    BranchExamSchedulerComponent
   ]
 })
 export class AdminModule { }

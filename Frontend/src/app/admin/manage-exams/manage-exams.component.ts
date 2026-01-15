@@ -40,7 +40,17 @@ export class ManageExamsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading exam series:', error);
-        this.errorMessage = error.error?.message || 'Failed to load exam series';
+        
+        // Handle 401 Unauthorized
+        if (error.status === 401) {
+          this.errorMessage = 'Session expired. Please login again.';
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 2000);
+        } else {
+          this.errorMessage = error.error?.message || 'Failed to load exam series';
+        }
+        
         this.isLoading = false;
       }
     });
