@@ -10,6 +10,7 @@ import { SeatingComponent } from './seating/seating.component';
 import { MindMapComponent } from './mind-map/mind-map.component';
 import { EventsComponent } from './events/events.component';
 import { ProfileComponent } from './profile/profile.component';
+import { ExamsComponent } from './exams/exams.component';
 
 @NgModule({
   imports: [
@@ -17,6 +18,7 @@ import { ProfileComponent } from './profile/profile.component';
     StudentRoutingModule,
     DashboardComponent,
     StudentNavbarComponent,
+    ExamsComponent,
     AcademicScheduleComponent,
     HallTicketComponent,
     SeatingComponent,

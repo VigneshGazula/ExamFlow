@@ -9,6 +9,7 @@ import { MindMapComponent } from './mind-map/mind-map.component';
 import { EventsComponent } from './events/events.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ProfileCompletionComponent } from './profile-completion/profile-completion.component';
+import { ExamsComponent } from './exams/exams.component';
 import { ProfileCompletionGuard } from '../guards/profile-completion.guard';
 
 const routes: Routes = [
@@ -23,6 +24,7 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
+      { path: 'exams', component: ExamsComponent },
       { path: 'schedule', component: AcademicScheduleComponent },
       { path: 'hall-ticket', component: HallTicketComponent },
       { path: 'seating', component: SeatingComponent },
