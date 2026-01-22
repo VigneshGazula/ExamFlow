@@ -1,0 +1,115 @@
+<div class="schedule-list-container">
+  <!-- Header Section -->
+  <div class="header-wrapper">
+    <div class="header-content">
+      <div class="title-section">
+        <div class="icon-box">
+          <i class="bi bi-calendar-week"></i>
+        </div>
+        <div>
+          <h2 class="main-title">Schedule Exams</h2>
+          <p class="subtitle" *ngIf="examSeries">
+            <span class="exam-name">{{ examSeries.name }}</span>
+            <span class="separator">•</span>
+            <span class="exam-year">Year {{ examSeries.year }}</span>
+          </p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-outline" routerLink="/admin/manage-exams">
+          <i class="bi bi-arrow-left"></i>
+          <span>Back</span>
+        </button>
+        <button
+          class="btn-success-custom"
+          *ngIf="allBranchesScheduled"
+          (click)="viewSummary()"
+        >
+          <i class="bi bi-file-text"></i>
+          <span>View Summary</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-wrapper">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="loading-message">Loading branch statuses...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-alert">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <!-- Branch Cards Grid -->
+  <div *ngIf="!isLoading && !errorMessage" class="branches-grid">
+    <div *ngFor="let branch of branches" class="branch-card-wrapper">
+      <div class="branch-card" [class.card-scheduled]="branch.isScheduled">
+        <div class="card-ribbon" *ngIf="branch.isScheduled">
+          <i class="bi bi-check-circle-fill"></i>
+        </div>
+        
+        <div class="card-header-section">
+          <div class="branch-icon">
+            <i class="bi bi-building"></i>
+          </div>
+          <div class="branch-info">
+            <h3 class="branch-name">{{ branch.branch }}</h3>
+            <span class="status-badge" 
+                  [class.badge-completed]="branch.isScheduled"
+                  [class.badge-pending]="!branch.isScheduled">
+              <i class="bi" 
+                 [ngClass]="branch.isScheduled ? 'bi-check-circle-fill' : 'bi-clock-history'"></i>
+              {{ branch.isScheduled ? 'Scheduled' : 'Pending' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="card-body-section">
+          <div class="exam-count">
+            <i class="bi bi-calendar-check"></i>
+            <span class="count-number">{{ branch.scheduledExamsCount }}</span>
+            <span class="count-label">exam(s) scheduled</span>
+          </div>
+        </div>
+
+        <div class="card-footer-section">
+          <button
+            class="btn-schedule"
+            [class.btn-reschedule]="branch.isScheduled"
+            (click)="scheduleExams(branch.branch)"
+          >
+            <i class="bi" 
+               [ngClass]="branch.isScheduled ? 'bi-pencil-square' : 'bi-calendar-plus'"></i>
+            <span>{{ branch.isScheduled ? 'Reschedule' : 'Schedule Now' }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Completion Message -->
+  <div *ngIf="allBranchesScheduled && !isLoading" class="completion-alert">
+    <div class="completion-icon">
+      <i class="bi bi-trophy-fill"></i>
+    </div>
+    <div class="completion-content">
+      <h4 class="completion-title">
+        <i class="bi bi-check-circle-fill"></i>
+        All Branches Scheduled!
+      </h4>
+      <p class="completion-text">
+        Congratulations! All branches have been scheduled successfully. You can now view the complete summary.
+      </p>
+      <button class="btn-view-summary" (click)="viewSummary()">
+        <i class="bi bi-file-text"></i>
+        <span>View Complete Summary</span>
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,542 @@
+/* ========================================
+   Modern Branch Schedule List Styles
+======================================== */
+
+.schedule-list-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+}
+
+/* ========================================
+   Header Section
+======================================== */
+.header-wrapper {
+  margin-bottom: 2.5rem;
+}
+
+.header-content {
+  background: white;
+  padding: 1.5rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title-section {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.icon-box {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: white;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.main-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.subtitle {
+  margin: 0.5rem 0 0 0;
+  font-size: 1rem;
+  color: #718096;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.exam-name {
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.separator {
+  color: #cbd5e0;
+}
+
+.exam-year {
+  color: #718096;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-outline,
+.btn-success-custom {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.btn-outline {
+  background: white;
+  border: 2px solid #e2e8f0;
+  color: #4a5568;
+}
+
+.btn-outline:hover {
+  background: #f7fafc;
+  border-color: #cbd5e0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-success-custom {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-success-custom:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* ========================================
+   Loading & Error States
+======================================== */
+.loading-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 2rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.loading-message {
+  margin-top: 1.5rem;
+  font-size: 1.1rem;
+  color: #718096;
+  font-weight: 500;
+}
+
+.error-alert {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: #fff5f5;
+  color: #c53030;
+  border-left: 4px solid #fc8181;
+  border-radius: 12px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.3s ease;
+}
+
+.error-alert i {
+  font-size: 1.5rem;
+}
+
+/* ========================================
+   Branch Cards Grid
+======================================== */
+.branches-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  animation: fadeIn 0.5s ease;
+}
+
+.branch-card-wrapper {
+  animation: fadeInUp 0.5s ease backwards;
+}
+
+.branch-card-wrapper:nth-child(1) { animation-delay: 0.1s; }
+.branch-card-wrapper:nth-child(2) { animation-delay: 0.2s; }
+.branch-card-wrapper:nth-child(3) { animation-delay: 0.3s; }
+.branch-card-wrapper:nth-child(4) { animation-delay: 0.4s; }
+.branch-card-wrapper:nth-child(5) { animation-delay: 0.5s; }
+.branch-card-wrapper:nth-child(6) { animation-delay: 0.6s; }
+
+.branch-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.branch-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.branch-card.card-scheduled {
+  border: 2px solid #d1fae5;
+  background: linear-gradient(to bottom, #ffffff 0%, #f0fdf4 100%);
+}
+
+.card-ribbon {
+  position: absolute;
+  top: 15px;
+  right: -35px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: 0.5rem 3rem;
+  transform: rotate(45deg);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+  font-size: 1.2rem;
+}
+
+.card-header-section {
+  padding: 1.75rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.branch-icon {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  flex-shrink: 0;
+}
+
+.branch-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.branch-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 0.75rem 0;
+  line-height: 1.2;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.badge-completed {
+  background: #d1fae5;
+  color: #059669;
+  border: 1px solid #34d399;
+}
+
+.badge-pending {
+  background: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fbbf24;
+}
+
+.card-body-section {
+  padding: 0 1.75rem 1.75rem 1.75rem;
+  flex: 1;
+}
+
+.exam-count {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.exam-count i {
+  font-size: 1.5rem;
+  color: #667eea;
+}
+
+.count-number {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.count-label {
+  font-size: 0.9rem;
+  color: #718096;
+  font-weight: 500;
+}
+
+.card-footer-section {
+  padding: 1.75rem;
+  background: #f7fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
+.btn-schedule,
+.btn-reschedule {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-schedule {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-schedule:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-reschedule {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.btn-reschedule:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+}
+
+/* ========================================
+   Completion Alert
+======================================== */
+.completion-alert {
+  margin-top: 2rem;
+  background: linear-gradient(135deg, #fef3c7 0%, #fef9e7 100%);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  border: 2px solid #fbbf24;
+  animation: slideIn 0.5s ease;
+}
+
+.completion-icon {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: white;
+  box-shadow: 0 6px 20px rgba(251, 191, 36, 0.4);
+  flex-shrink: 0;
+}
+
+.completion-content {
+  flex: 1;
+}
+
+.completion-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #92400e;
+  margin: 0 0 0.75rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.completion-title i {
+  color: #059669;
+}
+
+.completion-text {
+  font-size: 1.05rem;
+  color: #78350f;
+  margin: 0 0 1.5rem 0;
+  line-height: 1.6;
+}
+
+.btn-view-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.75rem;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-view-summary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* ========================================
+   Animations
+======================================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ========================================
+   Responsive Design
+======================================== */
+@media (max-width: 1200px) {
+  .schedule-list-container {
+    padding: 1.5rem;
+  }
+
+  .branches-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .schedule-list-container {
+    padding: 1rem;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .title-section {
+    width: 100%;
+  }
+
+  .header-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .btn-outline,
+  .btn-success-custom {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .branches-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .completion-alert {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .completion-icon {
+    width: 70px;
+    height: 70px;
+    font-size: 35px;
+  }
+
+  .completion-title {
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+
+  .btn-view-summary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .icon-box {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+  }
+
+  .main-title {
+    font-size: 1.5rem;
+  }
+
+  .branch-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+
+  .branch-name {
+    font-size: 1.2rem;
+  }
+}

@@ -1,0 +1,220 @@
+<div class="scheduler-container">
+  <!-- Header -->
+  <div class="header-section">
+    <div class="header-content">
+      <div class="title-group">
+        <div class="icon-wrapper">
+          <i class="bi bi-calendar-event"></i>
+        </div>
+        <div>
+          <h2 class="page-title">Schedule Exams</h2>
+          <p class="page-subtitle">{{ branch }} Branch</p>
+        </div>
+      </div>
+      <button class="btn-back" (click)="cancel()">
+        <i class="bi bi-arrow-left"></i>
+        <span>Back</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="loading-text">Loading available dates...</p>
+  </div>
+
+  <!-- Messages -->
+  <div *ngIf="errorMessage && !isLoading" class="alert-message alert-error">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <span>{{ errorMessage }}</span>
+    <button type="button" class="btn-close-alert" (click)="errorMessage = ''">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <div *ngIf="successMessage" class="alert-message alert-success">
+    <i class="bi bi-check-circle-fill"></i>
+    <span>{{ successMessage }}</span>
+  </div>
+
+  <!-- Scheduler Form -->
+  <form *ngIf="!isLoading && !successMessage" [formGroup]="schedulerForm" (ngSubmit)="onSubmit()" class="scheduler-form">
+    
+    <!-- Global Time Settings Card -->
+    <div class="settings-card">
+      <div class="card-header-custom">
+        <i class="bi bi-clock-history"></i>
+        <h3>Global Time Settings</h3>
+      </div>
+      <div class="card-body-custom">
+        <div class="time-inputs">
+          <div class="input-group">
+            <label for="globalStartTime" class="input-label">
+              <i class="bi bi-clock"></i>
+              Exam Start Time
+              <span class="required">*</span>
+            </label>
+            <input
+              type="time"
+              class="time-input"
+              id="globalStartTime"
+              formControlName="globalStartTime"
+              [disabled]="isSubmitting"
+            />
+            <small class="input-hint">Applied to all scheduled exams</small>
+          </div>
+          <div class="input-group">
+            <label for="globalEndTime" class="input-label">
+              <i class="bi bi-clock-fill"></i>
+              Exam End Time
+              <span class="required">*</span>
+            </label>
+            <input
+              type="time"
+              class="time-input"
+              id="globalEndTime"
+              formControlName="globalEndTime"
+              [disabled]="isSubmitting"
+            />
+            <small class="input-hint">Applied to all scheduled exams</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exam Schedule Table Card -->
+    <div class="schedule-card">
+      <div class="card-header-custom">
+        <i class="bi bi-calendar-check"></i>
+        <h3>Schedule Exam Dates</h3>
+      </div>
+      <div class="card-body-custom">
+        <div class="table-wrapper">
+          <table class="schedule-table">
+            <thead>
+              <tr>
+                <th class="col-date">Date</th>
+                <th class="col-day">Day</th>
+                <th class="col-subject">Subject</th>
+                <th class="col-holiday">Holiday</th>
+                <th class="col-status">Status</th>
+              </tr>
+            </thead>
+            <tbody formArrayName="examDates">
+              <tr *ngFor="let dateGroup of examDates.controls; let i = index" 
+                  [formGroupName]="i"
+                  class="table-row"
+                  [class.row-holiday]="dateGroup.get('isHoliday')?.value"
+                  [class.row-scheduled]="dateGroup.get('subject')?.value">
+                <td class="cell-date">
+                  <div class="date-display">
+                    <span class="date-day">{{ dateGroup.get('date')?.value | date:'dd' }}</span>
+                    <span class="date-month">{{ dateGroup.get('date')?.value | date:'MMM yyyy' }}</span>
+                  </div>
+                </td>
+                <td class="cell-day">
+                  <span class="day-badge">
+                    {{ dateGroup.get('dayOfWeek')?.value }}
+                  </span>
+                </td>
+                <td class="cell-subject">
+                  <div class="subject-selector">
+                    <select
+                      class="subject-dropdown"
+                      formControlName="subject"
+                      (change)="onSubjectChange(i)"
+                      [disabled]="dateGroup.get('isHoliday')?.value || isSubmitting"
+                    >
+                      <option value="">Select Subject</option>
+                      <option *ngFor="let subject of subjects" [value]="subject">
+                        {{ subject }}
+                      </option>
+                    </select>
+                    <i class="bi bi-chevron-down dropdown-icon"></i>
+                  </div>
+                </td>
+                <td class="cell-holiday">
+                  <label class="switch">
+                    <input
+                      type="checkbox"
+                      formControlName="isHoliday"
+                      (change)="onHolidayChange(i)"
+                      [disabled]="isSubmitting"
+                    />
+                    <span class="slider"></span>
+                  </label>
+                </td>
+                <td class="cell-status">
+                  <span 
+                    *ngIf="dateGroup.get('subject')?.value || dateGroup.get('isHoliday')?.value"
+                    class="status-badge"
+                    [ngClass]="'badge-' + getStatusClass(getExamStatus(dateGroup.get('date')?.value))"
+                  >
+                    <i class="bi" 
+                       [ngClass]="{
+                         'bi-hourglass-split': getExamStatus(dateGroup.get('date')?.value) === 'To Be Done',
+                         'bi-play-circle-fill': getExamStatus(dateGroup.get('date')?.value) === 'Ongoing',
+                         'bi-check-circle-fill': getExamStatus(dateGroup.get('date')?.value) === 'Completed'
+                       }"></i>
+                    {{ getExamStatus(dateGroup.get('date')?.value) }}
+                  </span>
+                  <span 
+                    *ngIf="!dateGroup.get('subject')?.value && !dateGroup.get('isHoliday')?.value"
+                    class="status-badge badge-secondary"
+                  >
+                    <i class="bi bi-dash-circle"></i>
+                    Not Set
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Instructions Card -->
+        <div class="instructions-box">
+          <div class="instructions-header">
+            <i class="bi bi-info-circle-fill"></i>
+            <strong>Quick Guide</strong>
+          </div>
+          <ul class="instructions-list">
+            <li><i class="bi bi-check2"></i> Select a subject for each exam date</li>
+            <li><i class="bi bi-check2"></i> Toggle "Holiday" switch to mark non-exam days</li>
+            <li><i class="bi bi-check2"></i> Global start/end times apply to all scheduled exams</li>
+            <li><i class="bi bi-check2"></i> You can leave dates unscheduled if needed</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button
+        type="button"
+        class="btn-secondary-action"
+        (click)="cancel()"
+        [disabled]="isSubmitting"
+      >
+        <i class="bi bi-x-circle"></i>
+        <span>Cancel</span>
+      </button>
+      <button
+        type="submit"
+        class="btn-primary-action"
+        [disabled]="isSubmitting || schedulerForm.invalid"
+      >
+        <span *ngIf="!isSubmitting" class="btn-content">
+          <i class="bi bi-save"></i>
+          <span>Save Schedule</span>
+        </span>
+        <span *ngIf="isSubmitting" class="btn-content">
+          <span class="spinner-border spinner-border-sm"></span>
+          <span>Saving...</span>
+        </span>
+      </button>
+    </div>
+  </form>
+</div>

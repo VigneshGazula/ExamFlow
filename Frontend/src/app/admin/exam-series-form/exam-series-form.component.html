@@ -1,0 +1,210 @@
+<div class="form-container">
+  <!-- Header Section -->
+  <div class="form-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <i class="bi bi-plus-circle-fill"></i>
+      </div>
+      <div>
+        <h2 class="form-title">Create New Exam Series</h2>
+        <p class="form-subtitle">Set up a new exam series with branches and dates</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Card -->
+  <div class="form-card">
+    <form [formGroup]="examSeriesForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Basic Information Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <i class="bi bi-info-circle"></i>
+          <h3>Basic Information</h3>
+        </div>
+        
+        <div class="form-group">
+          <label for="name" class="form-label">
+            <i class="bi bi-pencil"></i>
+            Exam Series Name
+            <span class="required">*</span>
+          </label>
+          <input
+            type="text"
+            class="form-input"
+            id="name"
+            formControlName="name"
+            placeholder="e.g., CSE Semester 3 - Jan 2026"
+            [class.input-error]="examSeriesForm.get('name')?.invalid && examSeriesForm.get('name')?.touched"
+          />
+          <div class="input-hint" *ngIf="!examSeriesForm.get('name')?.invalid || !examSeriesForm.get('name')?.touched">
+            Enter a descriptive name for the exam series
+          </div>
+          <div class="error-message" *ngIf="examSeriesForm.get('name')?.invalid && examSeriesForm.get('name')?.touched">
+            <i class="bi bi-exclamation-circle"></i>
+            Name is required (max 100 characters)
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="examType" class="form-label">
+              <i class="bi bi-bookmark"></i>
+              Exam Type
+              <span class="required">*</span>
+            </label>
+            <div class="select-wrapper">
+              <select
+                class="form-select"
+                id="examType"
+                formControlName="examType"
+              >
+                <option *ngFor="let type of examTypes" [value]="type.value">
+                  {{ type.label }}
+                </option>
+              </select>
+              <i class="bi bi-chevron-down select-icon"></i>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="year" class="form-label">
+              <i class="bi bi-calendar3"></i>
+              Academic Year
+              <span class="required">*</span>
+            </label>
+            <div class="select-wrapper">
+              <select
+                class="form-select"
+                id="year"
+                formControlName="year"
+              >
+                <option *ngFor="let yr of years" [value]="yr">
+                  Year {{ yr }}
+                </option>
+              </select>
+              <i class="bi bi-chevron-down select-icon"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Branches Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <i class="bi bi-building"></i>
+          <h3>Select Branches</h3>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">
+            <i class="bi bi-check2-square"></i>
+            Choose branches for this exam series
+            <span class="required">*</span>
+          </label>
+          <div class="branches-grid">
+            <label *ngFor="let branch of allBranches" class="branch-checkbox">
+              <input
+                type="checkbox"
+                [checked]="isBranchSelected(branch)"
+                (change)="onBranchToggle(branch)"
+              />
+              <span class="checkbox-custom"></span>
+              <span class="branch-label">{{ branch }}</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Date Range Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <i class="bi bi-calendar-range"></i>
+          <h3>Exam Duration</h3>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="startDate" class="form-label">
+              <i class="bi bi-calendar-check"></i>
+              Start Date
+              <span class="required">*</span>
+            </label>
+            <input
+              type="date"
+              class="form-input"
+              id="startDate"
+              formControlName="startDate"
+              [class.input-error]="examSeriesForm.get('startDate')?.invalid && examSeriesForm.get('startDate')?.touched"
+            />
+            <div class="error-message" *ngIf="examSeriesForm.get('startDate')?.invalid && examSeriesForm.get('startDate')?.touched">
+              <i class="bi bi-exclamation-circle"></i>
+              Start date is required
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="endDate" class="form-label">
+              <i class="bi bi-calendar-x"></i>
+              End Date
+              <span class="required">*</span>
+            </label>
+            <input
+              type="date"
+              class="form-input"
+              id="endDate"
+              formControlName="endDate"
+              [class.input-error]="examSeriesForm.get('endDate')?.invalid && examSeriesForm.get('endDate')?.touched"
+            />
+            <div class="error-message" *ngIf="examSeriesForm.get('endDate')?.invalid && examSeriesForm.get('endDate')?.touched">
+              <i class="bi bi-exclamation-circle"></i>
+              End date is required
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="alert-error">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" routerLink="/admin/manage-exams" [disabled]="isSubmitting">
+          <i class="bi bi-x-circle"></i>
+          <span>Cancel</span>
+        </button>
+        <button
+          type="submit"
+          class="btn-submit"
+          [disabled]="isSubmitting || examSeriesForm.invalid"
+        >
+          <span *ngIf="!isSubmitting" class="btn-content">
+            <i class="bi bi-check-circle"></i>
+            <span>Create Exam Series</span>
+          </span>
+          <span *ngIf="isSubmitting" class="btn-content">
+            <span class="spinner-border spinner-border-sm"></span>
+            <span>Creating...</span>
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Info Box -->
+  <div class="info-box">
+    <div class="info-header">
+      <i class="bi bi-lightbulb-fill"></i>
+      <strong>Quick Tips</strong>
+    </div>
+    <ul class="info-list">
+      <li><i class="bi bi-check2"></i> Choose a descriptive name for easy identification</li>
+      <li><i class="bi bi-check2"></i> Select the appropriate exam type (Semester/Midterm/Lab)</li>
+      <li><i class="bi bi-check2"></i> You can select multiple branches for the same series</li>
+      <li><i class="bi bi-check2"></i> Ensure the date range covers all exam days including holidays</li>
+    </ul>
+  </div>
+</div>

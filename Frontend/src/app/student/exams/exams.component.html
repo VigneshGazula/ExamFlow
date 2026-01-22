@@ -1,0 +1,251 @@
+<div class="exams-container">
+  <!-- Header Section -->
+  <div class="header-wrapper">
+    <div class="header-content">
+      <div class="title-section">
+        <div class="icon-box">
+          <i class="bi bi-calendar2-check"></i>
+        </div>
+        <div>
+          <h2 class="main-title">My Exams</h2>
+          <p class="subtitle">
+            <span class="branch-badge">{{ studentBranchCode }}</span>
+            <span class="separator">•</span>
+            <span>View your exam schedules</span>
+          </p>
+        </div>
+      </div>
+      <button class="btn-back" *ngIf="selectedExamSeries" (click)="backToList()">
+        <i class="bi bi-arrow-left"></i>
+        <span>Back to List</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-wrapper">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="loading-message">Loading your exams...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage && !isLoading" class="error-alert">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <span>{{ errorMessage }}</span>
+    <button type="button" class="btn-close-alert" (click)="errorMessage = ''">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && !errorMessage && examSeriesList.length === 0 && !selectedExamSeries" class="empty-state">
+    <div class="empty-icon">
+      <i class="bi bi-calendar-x"></i>
+    </div>
+    <h3 class="empty-title">No Exams Scheduled Yet</h3>
+    <p class="empty-text">
+      No exam schedules are available for {{ studentBranchCode }} ({{ studentBranch }}) branch at the moment.
+      <br>Check back later for updates.
+    </p>
+  </div>
+
+  <!-- Exam Series List View -->
+  <div *ngIf="!isLoading && !errorMessage && !selectedExamSeries && examSeriesList.length > 0" class="exam-series-grid">
+    <div *ngFor="let series of examSeriesList" class="series-card-wrapper">
+      <div class="series-card" (click)="viewExamDetails(series)">
+        <!-- Card Header -->
+        <div class="card-header-section">
+          <div class="header-top">
+            <div class="series-info">
+              <h3 class="series-name">{{ series.name }}</h3>
+              <div class="badges-row">
+                <span class="type-badge">
+                  <i class="bi bi-bookmark-fill"></i>
+                  {{ getExamTypeLabel(series.examType) }}
+                </span>
+                <span class="year-badge">
+                  <i class="bi bi-award"></i>
+                  Year {{ series.year }}
+                </span>
+              </div>
+            </div>
+            <div class="status-indicator" 
+                 [class.has-upcoming]="series.upcomingExams > 0"
+                 [class.all-completed]="series.upcomingExams === 0 && series.completedExams > 0">
+              <i class="bi" 
+                 [class.bi-clock-history]="series.upcomingExams > 0"
+                 [class.bi-check-circle-fill]="series.upcomingExams === 0"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body-section">
+          <!-- Date Range -->
+          <div class="info-row">
+            <div class="info-label">
+              <i class="bi bi-calendar-range"></i>
+              <span>Exam Period</span>
+            </div>
+            <div class="date-range">
+              <span class="date-item">{{ formatDate(series.startDate) }}</span>
+              <i class="bi bi-arrow-right"></i>
+              <span class="date-item">{{ formatDate(series.endDate) }}</span>
+            </div>
+          </div>
+
+          <!-- Exam Stats -->
+          <div class="stats-row">
+            <div class="stat-item">
+              <div class="stat-icon stat-total">
+                <i class="bi bi-clipboard-check"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-number">{{ series.totalExams }}</div>
+                <div class="stat-label">Total Exams</div>
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon stat-upcoming">
+                <i class="bi bi-hourglass-split"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-number">{{ series.upcomingExams }}</div>
+                <div class="stat-label">Upcoming</div>
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon stat-completed">
+                <i class="bi bi-check-circle"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-number">{{ series.completedExams }}</div>
+                <div class="stat-label">Completed</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Footer -->
+        <div class="card-footer-section">
+          <button class="btn-view-details">
+            <i class="bi bi-eye"></i>
+            <span>View Exam Schedule</span>
+            <i class="bi bi-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Exam Details View -->
+  <div *ngIf="selectedExamSeries && !isLoadingExams" class="exam-details-view">
+    <!-- Series Header -->
+    <div class="details-header">
+      <div class="details-header-content">
+        <h3 class="details-title">{{ selectedExamSeries.name }}</h3>
+        <div class="details-meta">
+          <span class="meta-item">
+            <i class="bi bi-bookmark-fill"></i>
+            {{ getExamTypeLabel(selectedExamSeries.examType) }}
+          </span>
+          <span class="separator">•</span>
+          <span class="meta-item">
+            <i class="bi bi-award"></i>
+            Year {{ selectedExamSeries.year }}
+          </span>
+          <span class="separator">•</span>
+          <span class="meta-item">
+            <i class="bi bi-building"></i>
+            {{ studentBranchCode }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exams Timeline -->
+    <div class="exams-timeline">
+      <div *ngFor="let exam of exams; let i = index" class="timeline-item" 
+           [class.is-holiday]="exam.isHoliday">
+        <div class="timeline-marker" 
+             [ngClass]="getStatusClass(getExamStatus(exam.examDate, exam.startTime, exam.endTime))">
+          <i class="bi" 
+             [class.bi-hourglass-split]="getExamStatus(exam.examDate, exam.startTime, exam.endTime) === 'Upcoming'"
+             [class.bi-play-circle-fill]="getExamStatus(exam.examDate, exam.startTime, exam.endTime) === 'Ongoing'"
+             [class.bi-check-circle-fill]="getExamStatus(exam.examDate, exam.startTime, exam.endTime) === 'Completed'"
+             [class.bi-calendar-x]="exam.isHoliday"></i>
+        </div>
+        
+        <div class="timeline-content">
+          <div class="exam-card" [class.card-holiday]="exam.isHoliday">
+            <!-- Date Header -->
+            <div class="exam-date-header">
+              <div class="date-display">
+                <span class="date-day">{{ formatDate(exam.examDate).split(' ')[1] }}</span>
+                <span class="date-month">{{ formatDate(exam.examDate).split(' ')[0] }} {{ formatDate(exam.examDate).split(' ')[2] }}</span>
+                <span class="date-weekday">{{ getWeekday(exam.examDate) }}</span>
+              </div>
+              <div class="status-badge" 
+                   [ngClass]="getStatusClass(getExamStatus(exam.examDate, exam.startTime, exam.endTime))">
+                {{ getExamStatus(exam.examDate, exam.startTime, exam.endTime) }}
+              </div>
+            </div>
+
+            <!-- Exam Details -->
+            <div class="exam-details" *ngIf="!exam.isHoliday">
+              <div class="subject-name">
+                <i class="bi bi-book"></i>
+                <h4>{{ exam.subject }}</h4>
+              </div>
+              
+              <div class="exam-info-grid">
+                <div class="info-item">
+                  <i class="bi bi-clock"></i>
+                  <span class="info-label">Start Time</span>
+                  <span class="info-value">{{ formatTime(exam.startTime) }}</span>
+                </div>
+                <div class="info-item">
+                  <i class="bi bi-clock-fill"></i>
+                  <span class="info-label">End Time</span>
+                  <span class="info-value">{{ formatTime(exam.endTime) }}</span>
+                </div>
+              </div>
+
+              <!-- Countdown for upcoming exams -->
+              <div class="exam-countdown" *ngIf="getExamStatus(exam.examDate, exam.startTime, exam.endTime) === 'Upcoming' && getDaysUntilExam(exam.examDate) <= 7">
+                <i class="bi bi-alarm"></i>
+                <span *ngIf="getDaysUntilExam(exam.examDate) === 0">Today!</span>
+                <span *ngIf="getDaysUntilExam(exam.examDate) === 1">Tomorrow</span>
+                <span *ngIf="getDaysUntilExam(exam.examDate) > 1">
+                  {{ getDaysUntilExam(exam.examDate) }} days to go
+                </span>
+              </div>
+            </div>
+
+            <!-- Holiday Banner -->
+            <div class="holiday-banner" *ngIf="exam.isHoliday">
+              <i class="bi bi-calendar-x"></i>
+              <span>Holiday</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Exams Message -->
+    <div *ngIf="exams.length === 0" class="no-exams-message">
+      <i class="bi bi-info-circle"></i>
+      <p>No exams scheduled for this series yet.</p>
+    </div>
+  </div>
+
+  <!-- Loading Exams State -->
+  <div *ngIf="isLoadingExams" class="loading-wrapper">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="loading-message">Loading exam details...</p>
+  </div>
+</div>

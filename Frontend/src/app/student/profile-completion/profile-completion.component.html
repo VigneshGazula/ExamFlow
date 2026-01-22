@@ -1,0 +1,132 @@
+<div class="profile-completion-wrapper">
+  <!-- Animated floating shapes -->
+  <div class="background-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div>
+    <div class="shape shape-5"></div>
+  </div>
+
+  <!-- Glassmorphism card container -->
+  <div class="profile-card-container">
+    <div class="profile-card">
+      <!-- Card header -->
+      <div class="profile-card-header">
+        <div class="icon">🎓</div>
+        <h2>Complete Your Profile</h2>
+        <p class="subtitle">
+          Let's get to know you better! Fill in your details to access the dashboard
+        </p>
+      </div>
+
+      <!-- Card body with form -->
+      <div class="profile-card-body">
+        <form (ngSubmit)="onSubmit()" #profileForm="ngForm">
+          
+          <!-- Roll Number -->
+          <div class="form-group">
+            <label for="rollNumber" class="form-label">
+              Roll Number
+              <span class="required-star">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-input"
+              id="rollNumber"
+              name="rollNumber"
+              [(ngModel)]="rollNumber"
+              required
+              maxlength="20"
+              placeholder="Enter your roll number (e.g., CS2021001)"
+              [disabled]="isSubmitting"
+            />
+          </div>
+
+          <!-- Department -->
+          <div class="form-group">
+            <label for="department" class="form-label">
+              Department
+              <span class="required-star">*</span>
+            </label>
+            <select
+              class="form-select"
+              id="department"
+              name="department"
+              [(ngModel)]="department"
+              required
+              [disabled]="isSubmitting"
+            >
+              <option value="" disabled selected>Choose your department</option>
+              <option *ngFor="let dept of departments" [value]="dept">
+                {{ dept }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Year -->
+          <div class="form-group">
+            <label for="year" class="form-label">
+              Academic Year
+              <span class="required-star">*</span>
+            </label>
+            <select
+              class="form-select"
+              id="year"
+              name="year"
+              [(ngModel)]="year"
+              required
+              [disabled]="isSubmitting"
+            >
+              <option value="" disabled selected>Select your current year</option>
+              <option *ngFor="let yr of years" [value]="yr">
+                Year {{ yr }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Section -->
+          <div class="form-group">
+            <label for="section" class="form-label">
+              Section
+              <span class="required-star">*</span>
+            </label>
+            <select
+              class="form-select"
+              id="section"
+              name="section"
+              [(ngModel)]="section"
+              required
+              [disabled]="isSubmitting"
+            >
+              <option value="" disabled selected>Choose your section</option>
+              <option *ngFor="let sec of sections" [value]="sec">
+                Section {{ sec }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Error message -->
+          <div *ngIf="errorMessage" class="alert-error">
+            ⚠️ {{ errorMessage }}
+          </div>
+
+          <!-- Submit button -->
+          <button
+            type="submit"
+            class="submit-button"
+            [disabled]="!profileForm.form.valid || isSubmitting"
+          >
+            <span *ngIf="!isSubmitting">
+              Complete Profile & Continue
+            </span>
+            <span *ngIf="isSubmitting">
+              <span class="spinner"></span>
+              Creating Your Profile...
+            </span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

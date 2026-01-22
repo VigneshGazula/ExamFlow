@@ -1,0 +1,886 @@
+/* ========================================
+   Modern Student Exams Component Styles
+======================================== */
+
+/* Container */
+.exams-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+}
+
+/* ========================================
+   Header Section
+======================================== */
+.header-wrapper {
+  margin-bottom: 2.5rem;
+}
+
+.header-content {
+  background: white;
+  padding: 1.5rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title-section {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.icon-box {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: white;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.main-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #718096;
+  margin: 0.25rem 0 0 0;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.branch-badge {
+  padding: 0.25rem 0.75rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.separator {
+  color: #cbd5e0;
+}
+
+.btn-back {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-weight: 600;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+  background: #f7fafc;
+  border-color: #cbd5e0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ========================================
+   Loading & Error States
+======================================== */
+.loading-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 2rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.loading-message {
+  margin-top: 1.5rem;
+  font-size: 1.1rem;
+  color: #718096;
+  font-weight: 500;
+}
+
+.error-alert {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: #fff5f5;
+  color: #c53030;
+  border-left: 4px solid #fc8181;
+  border-radius: 12px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  animation: slideDown 0.3s ease;
+  margin-bottom: 1.5rem;
+}
+
+.error-alert i {
+  font-size: 1.5rem;
+}
+
+.btn-close-alert {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0.25rem;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.btn-close-alert:hover {
+  opacity: 1;
+}
+
+/* ========================================
+   Empty State
+======================================== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 2rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.empty-icon {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.empty-icon i {
+  font-size: 4rem;
+  color: #cbd5e0;
+}
+
+.empty-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 1rem 0;
+}
+
+.empty-text {
+  font-size: 1.1rem;
+  color: #718096;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ========================================
+   Exam Series Grid
+======================================== */
+.exam-series-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.series-card-wrapper {
+  animation: fadeInUp 0.5s ease backwards;
+}
+
+.series-card-wrapper:nth-child(1) { animation-delay: 0.1s; }
+.series-card-wrapper:nth-child(2) { animation-delay: 0.2s; }
+.series-card-wrapper:nth-child(3) { animation-delay: 0.3s; }
+.series-card-wrapper:nth-child(4) { animation-delay: 0.4s; }
+.series-card-wrapper:nth-child(5) { animation-delay: 0.5s; }
+.series-card-wrapper:nth-child(6) { animation-delay: 0.6s; }
+
+.series-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.series-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* ========================================
+   Series Card Header
+======================================== */
+.card-header-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 1.5rem;
+  color: white;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.series-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.series-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 0.75rem 0;
+  line-height: 1.3;
+}
+
+.badges-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.type-badge,
+.year-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.status-indicator {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.status-indicator.has-upcoming {
+  background: rgba(251, 191, 36, 0.3);
+  color: #fbbf24;
+}
+
+.status-indicator.all-completed {
+  background: rgba(16, 185, 129, 0.3);
+  color: #10b981;
+}
+
+/* ========================================
+   Series Card Body
+======================================== */
+.card-body-section {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.info-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 0.9rem;
+}
+
+.info-label i {
+  color: #667eea;
+  font-size: 1.1rem;
+}
+
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.date-item {
+  font-weight: 600;
+  color: #2d3748;
+  font-size: 0.95rem;
+}
+
+.date-range i {
+  color: #667eea;
+}
+
+/* Stats Row */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0.5rem;
+  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: white;
+}
+
+.stat-icon.stat-total {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.stat-icon.stat-upcoming {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.stat-icon.stat-completed {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.stat-content {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2d3748;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: #718096;
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
+/* ========================================
+   Series Card Footer
+======================================== */
+.card-footer-section {
+  padding: 1.5rem;
+  background: #f7fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
+.btn-view-details {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-view-details:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* ========================================
+   Exam Details View
+======================================== */
+.exam-details-view {
+  animation: fadeIn 0.5s ease;
+}
+
+.details-header {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+}
+
+.details-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 1rem 0;
+}
+
+.details-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  color: #718096;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+
+.meta-item i {
+  color: #667eea;
+}
+
+/* ========================================
+   Exams Timeline
+======================================== */
+.exams-timeline {
+  position: relative;
+  padding-left: 3rem;
+}
+
+.exams-timeline::before {
+  content: '';
+  position: absolute;
+  left: 20px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -2.5rem;
+  top: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1;
+}
+
+.timeline-marker.status-upcoming {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.timeline-marker.status-ongoing {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  animation: pulse 2s infinite;
+}
+
+.timeline-marker.status-completed {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.timeline-content {
+  margin-left: 0.5rem;
+}
+
+/* ========================================
+   Exam Card
+======================================== */
+.exam-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.exam-card:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  transform: translateX(4px);
+}
+
+.exam-card.card-holiday {
+  background: linear-gradient(135deg, #fef3c7 0%, #fef9e7 100%);
+  border: 2px solid #fbbf24;
+}
+
+.exam-date-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.date-display {
+  display: flex;
+  flex-direction: column;
+}
+
+.date-day {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #667eea;
+  line-height: 1;
+}
+
+.date-month {
+  font-size: 0.95rem;
+  color: #718096;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}
+
+.date-weekday {
+  font-size: 0.85rem;
+  color: #a0aec0;
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
+.status-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.status-upcoming {
+  background: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fbbf24;
+}
+
+.status-badge.status-ongoing {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border: 1px solid #60a5fa;
+  animation: glow 2s infinite;
+}
+
+.status-badge.status-completed {
+  background: #d1fae5;
+  color: #059669;
+  border: 1px solid #34d399;
+}
+
+/* Exam Details */
+.exam-details {
+  padding: 1.5rem;
+}
+
+.subject-name {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.subject-name i {
+  font-size: 1.5rem;
+  color: #667eea;
+}
+
+.subject-name h4 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0;
+}
+
+.exam-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.info-item i {
+  color: #667eea;
+  font-size: 1.2rem;
+}
+
+.info-label {
+  font-size: 0.85rem;
+  color: #718096;
+  font-weight: 500;
+}
+
+.info-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.exam-countdown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #fef3c7 0%, #fef9e7 100%);
+  border: 2px solid #fbbf24;
+  border-radius: 10px;
+  font-weight: 700;
+  color: #d97706;
+  font-size: 1.05rem;
+  margin-top: 1rem;
+  animation: pulse 2s infinite;
+}
+
+.exam-countdown i {
+  font-size: 1.5rem;
+}
+
+/* Holiday Banner */
+.holiday-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #d97706;
+}
+
+.holiday-banner i {
+  font-size: 2rem;
+}
+
+/* No Exams Message */
+.no-exams-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 3rem;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.no-exams-message i {
+  font-size: 3rem;
+  color: #cbd5e0;
+}
+
+.no-exams-message p {
+  font-size: 1.1rem;
+  color: #718096;
+  margin: 0;
+}
+
+/* ========================================
+   Animations
+======================================== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.8);
+  }
+}
+
+/* ========================================
+   Responsive Design
+======================================== */
+@media (max-width: 1200px) {
+  .exams-container {
+    padding: 1.5rem;
+  }
+
+  .exam-series-grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .exams-container {
+    padding: 1rem;
+  }
+
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .title-section {
+    width: 100%;
+  }
+
+  .btn-back {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .exam-series-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-row {
+    grid-template-columns: 1fr;
+  }
+
+  .exam-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .exams-timeline {
+    padding-left: 2.5rem;
+  }
+
+  .timeline-marker {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+    left: -2.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .icon-box {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+  }
+
+  .main-title {
+    font-size: 1.5rem;
+  }
+
+  .series-name {
+    font-size: 1.1rem;
+  }
+
+  .date-day {
+    font-size: 1.5rem;
+  }
+
+  .subject-name h4 {
+    font-size: 1.1rem;
+  }
+}
