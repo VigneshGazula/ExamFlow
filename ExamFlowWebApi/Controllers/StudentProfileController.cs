@@ -55,6 +55,10 @@ namespace ExamFlowWebApi.Controllers
                     return Unauthorized(new { message = "Invalid token" });
                 }
 
+                // Debug: Log user claims
+                var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+                Console.WriteLine($"[DEBUG] GetProfile - UserId: {userId}, Role Claim: {roleClaim}, IsInRole('Student'): {User.IsInRole("Student")}");
+
                 var profile = await _studentProfileService.GetProfileAsync(userId.Value);
                 if (profile == null)
                 {
@@ -65,6 +69,7 @@ namespace ExamFlowWebApi.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"[ERROR] GetProfile: {ex.Message}");
                 return BadRequest(new { message = ex.Message });
             }
         }

@@ -8,7 +8,7 @@ namespace ExamFlowWebApi.Controllers
 {
     [ApiController]
     [Route("api/examseries")]
-    [Authorize(Roles = "Admin")]
+    [Authorize]  // Require authentication, but not a specific role
     public class ExamSeriesController : ControllerBase
     {
         private readonly IExamService _examService;
@@ -24,6 +24,7 @@ namespace ExamFlowWebApi.Controllers
         /// Create a new exam series (Admin only)
         /// </summary>
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateExamSeries([FromBody] CreateExamSeriesRequest request)
         {
             try
@@ -51,9 +52,10 @@ namespace ExamFlowWebApi.Controllers
         }
 
         /// <summary>
-        /// Get all exam series
+        /// Get all exam series (Admin only)
         /// </summary>
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllExamSeries()
         {
             try
@@ -69,9 +71,10 @@ namespace ExamFlowWebApi.Controllers
         }
 
         /// <summary>
-        /// Get exam series by ID
+        /// Get exam series by ID (Admin only)
         /// </summary>
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetExamSeriesById(Guid id)
         {
             try
@@ -91,9 +94,10 @@ namespace ExamFlowWebApi.Controllers
         }
 
         /// <summary>
-        /// Get unscheduled branches for an exam series
+        /// Get unscheduled branches for an exam series (Admin only)
         /// </summary>
         [HttpGet("{id}/branches")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUnscheduledBranches(Guid id)
         {
             try
@@ -113,9 +117,10 @@ namespace ExamFlowWebApi.Controllers
         }
 
         /// <summary>
-        /// Get available dates for a branch in an exam series
+        /// Get available dates for a branch in an exam series (Admin only)
         /// </summary>
         [HttpGet("{id}/branches/{branch}/dates")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAvailableDates(Guid id, string branch)
         {
             try
@@ -135,9 +140,10 @@ namespace ExamFlowWebApi.Controllers
         }
 
         /// <summary>
-        /// Get subjects for a branch
+        /// Get subjects for a branch (Admin only)
         /// </summary>
         [HttpGet("branches/{branch}/subjects")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetBranchSubjects(string branch)
         {
             try
@@ -157,9 +163,10 @@ namespace ExamFlowWebApi.Controllers
         }
 
         /// <summary>
-        /// Schedule exams for a branch
+        /// Schedule exams for a branch (Admin only)
         /// </summary>
         [HttpPost("{id}/branches/{branch}/schedule")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ScheduleBranchExams(Guid id, string branch, [FromBody] ScheduleBranchRequest request)
         {
             try
@@ -185,9 +192,10 @@ namespace ExamFlowWebApi.Controllers
         }
 
         /// <summary>
-        /// Get exam series summary with all scheduled exams
+        /// Get exam series summary with all scheduled exams (Admin only)
         /// </summary>
         [HttpGet("{id}/summary")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetExamSeriesSummary(Guid id)
         {
             try
@@ -246,6 +254,19 @@ namespace ExamFlowWebApi.Controllers
         {
             try
             {
+                // Debug: Log authorization details
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+                var isInStudentRole = User.IsInRole("Student");
+                
+                _logger.LogInformation($"[DEBUG] GetStudentExamSeries - UserId: {userId}, Role: {roleClaim}, IsInRole('Student'): {isInStudentRole}, Branch: {branch}");
+                
+                if (!isInStudentRole)
+                {
+                    _logger.LogWarning($"[AUTH FAILED] User {userId} with role '{roleClaim}' attempted to access student exams");
+                    return Forbid();
+                }
+
                 var examSeries = await _examService.GetStudentExamSeriesAsync(branch);
                 return Ok(examSeries);
             }
