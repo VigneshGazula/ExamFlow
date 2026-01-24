@@ -276,14 +276,14 @@ namespace ExamFlowWebApi.Services.Implementations
         }
 
         // Student-specific methods
-        public async Task<List<StudentExamSeriesResponse>> GetStudentExamSeriesAsync(string branch)
+        public async Task<List<StudentExamSeriesResponse>> GetStudentExamSeriesAsync(string branch, int year)
         {
             // Convert department name to branch code if needed
             var branchCode = BranchSubjects.GetBranchCode(branch);
 
             var examSeriesList = await _context.ExamSeries
                 .Include(es => es.Exams)
-                .Where(es => es.Branches.Contains(branchCode))
+                .Where(es => es.Branches.Contains(branchCode) && es.Year == year)  // Filter by branch AND year
                 .OrderByDescending(es => es.CreatedAt)
                 .ToListAsync();
 

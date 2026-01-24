@@ -161,9 +161,9 @@ export class ExamService {
   }
 
   // Student-specific methods
-  getStudentExamSeries(branch: string): Observable<StudentExamSeriesResponse[]> {
+  getStudentExamSeries(branch: string, year: number): Observable<StudentExamSeriesResponse[]> {
     return this.http.get<StudentExamSeriesResponse[]>(
-      `${this.apiUrl}/student/${branch}`,
+      `${this.apiUrl}/student/${branch}/${year}`,
       { headers: this.getHeaders() }
     );
   }

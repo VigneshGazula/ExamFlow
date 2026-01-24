@@ -6,7 +6,7 @@
       <li routerLink="/faculty/invigilation" routerLinkActive="active">Invigilation Duties</li>
       <li routerLink="/faculty/evaluation" routerLinkActive="active">Evaluation</li>
       <li routerLink="/faculty/profile" routerLinkActive="active">Profile</li>
-      <li routerLink="/logout">Logout</li>
+      <li (click)="logout()" style="cursor: pointer;">Logout</li>
     </ul>
   </nav>
   <main class="faculty-main">

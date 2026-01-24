@@ -248,9 +248,9 @@ namespace ExamFlowWebApi.Controllers
         /// <summary>
         /// Get exam series for a student's branch (Student role)
         /// </summary>
-        [HttpGet("student/{branch}")]
+        [HttpGet("student/{branch}/{year}")]
         [Authorize(Roles = "Student")]
-        public async Task<IActionResult> GetStudentExamSeries(string branch)
+        public async Task<IActionResult> GetStudentExamSeries(string branch, int year)
         {
             try
             {
@@ -259,7 +259,7 @@ namespace ExamFlowWebApi.Controllers
                 var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
                 var isInStudentRole = User.IsInRole("Student");
                 
-                _logger.LogInformation($"[DEBUG] GetStudentExamSeries - UserId: {userId}, Role: {roleClaim}, IsInRole('Student'): {isInStudentRole}, Branch: {branch}");
+                _logger.LogInformation($"[DEBUG] GetStudentExamSeries - UserId: {userId}, Role: {roleClaim}, IsInRole('Student'): {isInStudentRole}, Branch: {branch}, Year: {year}");
                 
                 if (!isInStudentRole)
                 {
@@ -267,7 +267,7 @@ namespace ExamFlowWebApi.Controllers
                     return Forbid();
                 }
 
-                var examSeries = await _examService.GetStudentExamSeriesAsync(branch);
+                var examSeries = await _examService.GetStudentExamSeriesAsync(branch, year);
                 return Ok(examSeries);
             }
             catch (Exception ex)

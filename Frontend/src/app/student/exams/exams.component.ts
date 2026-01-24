@@ -20,6 +20,7 @@ export class ExamsComponent implements OnInit {
   errorMessage = '';
   studentBranch = '';
   studentBranchCode = '';
+  studentYear = 0;
 
   // Map department names to branch codes
   private departmentToBranch: { [key: string]: string } = {
@@ -48,6 +49,8 @@ export class ExamsComponent implements OnInit {
         this.studentBranch = profile.department;
         // Convert department name to branch code
         this.studentBranchCode = this.departmentToBranch[profile.department] || profile.department;
+        // Get student's year
+        this.studentYear = parseInt(profile.year);
         this.loadExamSeries();
       },
       error: (error) => {
@@ -84,7 +87,7 @@ export class ExamsComponent implements OnInit {
 
   loadExamSeries(): void {
     this.isLoading = true;
-    this.examService.getStudentExamSeries(this.studentBranchCode).subscribe({
+    this.examService.getStudentExamSeries(this.studentBranchCode, this.studentYear).subscribe({
       next: (series) => {
         this.examSeriesList = series;
         this.isLoading = false;

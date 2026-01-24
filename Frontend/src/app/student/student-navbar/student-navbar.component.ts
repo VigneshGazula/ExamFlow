@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { AuthApiService } from '../../auth/auth-api.service';
 
 @Component({
   selector: 'app-student-navbar',
@@ -9,4 +9,14 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [RouterModule]
 })
-export class StudentNavbarComponent {}
+export class StudentNavbarComponent {
+  constructor(
+    private authService: AuthApiService,
+    private router: Router
+  ) {}
+
+  logout(): void {
+    this.authService.clearAuth();
+    this.router.navigate(['/login']);
+  }
+}

@@ -9,7 +9,7 @@
       <li routerLink="/student/mind-map" routerLinkActive="active">Mind Map & Study Support</li>
       <li routerLink="/student/events" routerLinkActive="active">Events</li>
       <li routerLink="/student/profile" routerLinkActive="active">Profile</li>
-      <li routerLink="/logout">Logout</li>
+      <li (click)="logout()" style="cursor: pointer;">Logout</li>
     </ul>
   </nav>
   <main class="student-main">

@@ -14,7 +14,7 @@ namespace ExamFlowWebApi.Services.Interfaces
         Task<ExamSeriesResponse?> GetExamSeriesByIdAsync(Guid id);
         
         // Student-specific methods
-        Task<List<StudentExamSeriesResponse>> GetStudentExamSeriesAsync(string branch);
+        Task<List<StudentExamSeriesResponse>> GetStudentExamSeriesAsync(string branch, int year);
         Task<List<ExamResponse>> GetStudentExamsAsync(Guid examSeriesId, string branch);
     }
 }
