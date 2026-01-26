@@ -21,6 +21,7 @@ export class ExamsComponent implements OnInit {
   studentBranch = '';
   studentBranchCode = '';
   studentYear = 0;
+  hallTicketStatus: { [key: string]: boolean } = {};
 
   // Map department names to branch codes
   private departmentToBranch: { [key: string]: string } = {
@@ -87,6 +88,7 @@ export class ExamsComponent implements OnInit {
 
   loadExamSeries(): void {
     this.isLoading = true;
+    this.loadHallTicketStatus();
     this.examService.getStudentExamSeries(this.studentBranchCode, this.studentYear).subscribe({
       next: (series) => {
         this.examSeriesList = series;
@@ -227,5 +229,30 @@ export class ExamsComponent implements OnInit {
   getWeekday(dateStr: string): string {
     const date = new Date(dateStr);
     return date.toLocaleDateString('en-US', { weekday: 'long' });
+  }
+
+  loadHallTicketStatus(): void {
+    const stored = localStorage.getItem('hallTicketStatus');
+    if (stored) {
+      this.hallTicketStatus = JSON.parse(stored);
+    }
+  }
+
+  isHallTicketReleased(examSeriesId: string): boolean {
+    return this.hallTicketStatus[examSeriesId] || false;
+  }
+
+  getExamSeriesStatus(series: StudentExamSeriesResponse): 'upcoming' | 'ongoing' | 'completed' {
+    const now = new Date();
+    const startDate = new Date(series.startDate);
+    const endDate = new Date(series.endDate);
+
+    if (startDate > now) {
+      return 'upcoming';
+    } else if (startDate <= now && endDate >= now) {
+      return 'ongoing';
+    } else {
+      return 'completed';
+    }
   }
 }

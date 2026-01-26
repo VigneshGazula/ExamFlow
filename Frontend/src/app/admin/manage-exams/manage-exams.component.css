@@ -2,6 +2,115 @@
 h2 {
   color: #2c3e50;
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.emoji-icon {
+  font-size: 1.2em;
+  margin-right: 0.25rem;
+}
+
+.emoji-large {
+  font-size: 5rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+/* Filter Tabs */
+.filter-tabs {
+  display: flex;
+  gap: 1rem;
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 12px;
+  flex-wrap: wrap;
+}
+
+.tab-button {
+  flex: 1;
+  min-width: 150px;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid transparent;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  color: #6c757d;
+}
+
+.tab-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.tab-button.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: #667eea;
+}
+
+.tab-count {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.tab-button.active .tab-count {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.tab-count.upcoming {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.tab-count.ongoing {
+  background: #fff3e0;
+  color: #f57c00;
+}
+
+.tab-count.completed {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
+/* Status Ribbon */
+.status-ribbon {
+  position: absolute;
+  top: 15px;
+  right: -35px;
+  transform: rotate(45deg);
+  width: 150px;
+  text-align: center;
+  padding: 0.3rem 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.status-upcoming {
+  background: linear-gradient(135deg, #42a5f5, #1976d2);
+  color: white;
+}
+
+.status-ongoing {
+  background: linear-gradient(135deg, #ffa726, #f57c00);
+  color: white;
+}
+
+.status-completed {
+  background: linear-gradient(135deg, #66bb6a, #388e3c);
+  color: white;
 }
 
 /* Exam Series Card */
@@ -10,11 +119,17 @@ h2 {
   border-radius: 12px;
   transition: all 0.3s ease;
   overflow: hidden;
+  position: relative;
 }
 
 .exam-series-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15) !important;
+}
+
+.completed-card {
+  opacity: 0.95;
+  border: 2px solid #66bb6a;
 }
 
 /* Card Header Gradient */
@@ -96,11 +211,26 @@ h2 {
   padding: 0.625rem 1.25rem;
   font-weight: 500;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.hall-ticket-btn {
+  font-weight: 600;
+  padding: 0.625rem 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.hall-ticket-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .btn-lg {

@@ -1,18 +1,56 @@
 <div class="container-fluid py-4">
-  <!-- Header Section -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h2 class="mb-1">
-        <i class="bi bi-calendar-check-fill text-primary me-2"></i>
-        Manage Exams
-      </h2>
-      <p class="text-muted mb-0">Schedule and manage exam series for different branches</p>
-    </div>
-    <button class="btn btn-primary btn-lg" (click)="createNewSeries()">
-      <i class="bi bi-plus-circle me-2"></i>
-      Create New Exam Series
-    </button>
+<!-- Header Section -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h2 class="mb-1">
+      <span class="emoji-icon">📋</span>
+      <i class="bi bi-calendar-check-fill text-primary me-2"></i>
+      Manage Exams
+    </h2>
+    <p class="text-muted mb-0">Schedule and manage exam series for different branches</p>
   </div>
+  <button class="btn btn-primary btn-lg" (click)="createNewSeries()">
+    <span class="emoji-icon">✨</span>
+    <i class="bi bi-plus-circle me-2"></i>
+    Create New Exam Series
+  </button>
+</div>
+
+<!-- Filter Tabs -->
+<div class="filter-tabs mb-4" *ngIf="!isLoading && examSeriesList.length > 0">
+  <button 
+    class="tab-button" 
+    [class.active]="activeTab === 'all'"
+    (click)="setActiveTab('all')">
+    <span class="emoji-icon">📚</span>
+    <span>All Exams</span>
+    <span class="tab-count">{{ examSeriesList.length }}</span>
+  </button>
+  <button 
+    class="tab-button" 
+    [class.active]="activeTab === 'upcoming'"
+    (click)="setActiveTab('upcoming')">
+    <span class="emoji-icon">🔜</span>
+    <span>Upcoming</span>
+    <span class="tab-count upcoming">{{ upcomingExams.length }}</span>
+  </button>
+  <button 
+    class="tab-button" 
+    [class.active]="activeTab === 'ongoing'"
+    (click)="setActiveTab('ongoing')">
+    <span class="emoji-icon">⏳</span>
+    <span>Ongoing</span>
+    <span class="tab-count ongoing">{{ ongoingExams.length }}</span>
+  </button>
+  <button 
+    class="tab-button" 
+    [class.active]="activeTab === 'completed'"
+    (click)="setActiveTab('completed')">
+    <span class="emoji-icon">✅</span>
+    <span>Completed</span>
+    <span class="tab-count completed">{{ completedExams.length }}</span>
+  </button>
+</div>
 
   <!-- Loading State -->
   <div *ngIf="isLoading" class="text-center py-5">
@@ -32,11 +70,13 @@
   <!-- Empty State -->
   <div *ngIf="!isLoading && !errorMessage && examSeriesList.length === 0" class="empty-state text-center py-5">
     <div class="empty-icon mb-4">
+      <span class="emoji-large">📝</span>
       <i class="bi bi-calendar-x display-1 text-muted"></i>
     </div>
     <h3 class="text-muted mb-3">No Exam Series Yet</h3>
     <p class="text-muted mb-4">Get started by creating your first exam series</p>
     <button class="btn btn-primary btn-lg" (click)="createNewSeries()">
+      <span class="emoji-icon">✨</span>
       <i class="bi bi-plus-circle me-2"></i>
       Create Your First Exam Series
     </button>
@@ -45,19 +85,30 @@
   <!-- Exam Series List -->
   <div *ngIf="!isLoading && !errorMessage && examSeriesList.length > 0" class="exam-series-grid">
     <div class="row g-4">
-      <div *ngFor="let series of examSeriesList" class="col-md-6 col-lg-4">
-        <div class="card exam-series-card h-100 shadow-sm">
+      <div *ngFor="let series of getFilteredExams()" class="col-md-6 col-lg-4">
+        <div class="card exam-series-card h-100 shadow-sm" [class.completed-card]="isCompleted(series)">
+          <!-- Status Badge -->
+          <div class="status-ribbon" [ngClass]="'status-' + getExamStatus(series)">
+            <span *ngIf="getExamStatus(series) === 'upcoming'">🔜 Upcoming</span>
+            <span *ngIf="getExamStatus(series) === 'ongoing'">⏳ Ongoing</span>
+            <span *ngIf="getExamStatus(series) === 'completed'">✅ Completed</span>
+          </div>
+
           <!-- Card Header -->
           <div class="card-header bg-gradient-primary text-white">
             <div class="d-flex justify-content-between align-items-start">
               <div>
                 <h5 class="card-title mb-1">{{ series.name }}</h5>
                 <span class="badge bg-white text-primary">
+                  <span *ngIf="series.examType === 1">📖</span>
+                  <span *ngIf="series.examType === 2">📝</span>
+                  <span *ngIf="series.examType === 3 || series.examType === 4">🔬</span>
                   {{ getExamTypeLabel(series.examType) }}
                 </span>
               </div>
               <div class="text-end">
                 <div class="year-badge">
+                  <span class="emoji-icon">🎓</span>
                   Year {{ series.year }}
                 </div>
               </div>
@@ -118,8 +169,20 @@
                 class="btn btn-primary"
                 (click)="scheduleExams(series.id)"
               >
+                <span class="emoji-icon">📅</span>
                 <i class="bi bi-calendar-plus me-2"></i>
                 Schedule Exams
+              </button>
+              
+              <!-- Hall Ticket Button (only for completed exams) -->
+              <button 
+                *ngIf="isCompleted(series)"
+                class="btn hall-ticket-btn"
+                [class.btn-success]="isHallTicketReleased(series.id)"
+                [class.btn-outline-success]="!isHallTicketReleased(series.id)"
+                (click)="toggleHallTicket(series.id)">
+                <span *ngIf="isHallTicketReleased(series.id)">🎫 Hall Tickets Released</span>
+                <span *ngIf="!isHallTicketReleased(series.id)">🎫 Release Hall Tickets</span>
               </button>
             </div>
           </div>

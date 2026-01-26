@@ -1,7 +1,177 @@
-<div class="profile-container">
-  <h2>Student Profile</h2>
-  <div class="profile-field">Name: <!-- Student Name --></div>
-  <div class="profile-field">Roll No: <!-- Roll Number --></div>
-  <div class="profile-field">Course: <!-- Course --></div>
-  <div class="profile-field">Email: <!-- Email --></div>
+<div class="profile-page">
+  <!-- Header Section -->
+  <div class="profile-header">
+    <div class="header-content">
+      <div class="avatar-section">
+        <div class="avatar-circle">
+          <span class="avatar-text">{{ userInfo?.fullName?.charAt(0) || 'S' }}</span>
+        </div>
+        <div class="status-badge">
+          <i class="bi bi-patch-check-fill"></i>
+          <span>Active Student</span>
+        </div>
+      </div>
+      <div class="header-info">
+        <h1 class="student-name">{{ userInfo?.fullName || 'Student Name' }}</h1>
+        <p class="student-id">
+          <i class="bi bi-person-badge"></i>
+          Student ID: {{ userInfo?.userId || 'N/A' }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="loading-text">Loading your profile...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage && !isLoading" class="error-alert">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <!-- Profile Content -->
+  <div *ngIf="!isLoading && profile && !errorMessage" class="profile-content">
+    <!-- Main Profile Card -->
+    <div class="profile-card main-card">
+      <div class="card-header">
+        <h2>
+          <span class="emoji-icon">📋</span>
+          <i class="bi bi-person-lines-fill"></i>
+          Personal Information
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-label">
+              <i class="bi bi-person-circle"></i>
+              <span>Full Name</span>
+            </div>
+            <div class="info-value">{{ userInfo?.fullName || 'N/A' }}</div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-label">
+              <i class="bi bi-envelope-fill"></i>
+              <span>Email Address</span>
+            </div>
+            <div class="info-value">{{ userInfo?.email || 'N/A' }}</div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-label">
+              <i class="bi bi-card-text"></i>
+              <span>Roll Number</span>
+            </div>
+            <div class="info-value highlight">{{ profile.rollNumber }}</div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-label">
+              <i class="bi bi-hash"></i>
+              <span>Student ID</span>
+            </div>
+            <div class="info-value">{{ userInfo?.userId || 'N/A' }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Academic Information Card -->
+    <div class="profile-card academic-card">
+      <div class="card-header">
+        <h2>
+          <span class="emoji-icon">🎓</span>
+          <i class="bi bi-mortarboard-fill"></i>
+          Academic Details
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item featured">
+            <div class="info-label">
+              <span class="emoji-large">{{ getDepartmentEmoji(profile.department) }}</span>
+              <span>Department</span>
+            </div>
+            <div class="info-value large">{{ profile.department }}</div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-label">
+              <span class="emoji-icon">📅</span>
+              <i class="bi bi-calendar3"></i>
+              <span>Year</span>
+            </div>
+            <div class="info-value year-badge">
+              Year {{ profile.year }}
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-label">
+              <span class="emoji-icon">📑</span>
+              <i class="bi bi-collection"></i>
+              <span>Section</span>
+            </div>
+            <div class="info-value section-badge">
+              Section {{ profile.section }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Info Card -->
+    <div class="profile-card stats-card">
+      <div class="card-header">
+        <h2>
+          <span class="emoji-icon">📊</span>
+          <i class="bi bi-graph-up"></i>
+          Profile Statistics
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-icon">
+              <span class="emoji-icon">✅</span>
+              <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Profile Status</div>
+              <div class="stat-value">Complete</div>
+            </div>
+          </div>
+
+          <div class="stat-box">
+            <div class="stat-icon calendar-icon">
+              <span class="emoji-icon">📅</span>
+              <i class="bi bi-calendar-check"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Member Since</div>
+              <div class="stat-value">{{ formatDate(profile.createdAt) }}</div>
+            </div>
+          </div>
+
+          <div class="stat-box">
+            <div class="stat-icon role-icon">
+              <span class="emoji-icon">👨‍🎓</span>
+              <i class="bi bi-person-badge-fill"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">Role</div>
+              <div class="stat-value">Student</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -52,6 +52,37 @@ export class AuthApiService {
   storeToken(token: string): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem('jwt', token);
+      // Extract and store user info from token
+      this.extractAndStoreUserInfo(token);
+    }
+  }
+
+  private extractAndStoreUserInfo(token: string): void {
+    try {
+      // Decode JWT token (format: header.payload.signature)
+      const payload = token.split('.')[1];
+      const decodedPayload = JSON.parse(atob(payload));
+      
+      // Store user info
+      const userInfo = {
+        fullName: decodedPayload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || 
+                  decodedPayload.name || 
+                  decodedPayload.fullName || 
+                  'User',
+        email: decodedPayload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] || 
+               decodedPayload.email || 
+               '',
+        userId: decodedPayload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] || 
+                decodedPayload.sub || 
+                decodedPayload.userId || 
+                ''
+      };
+      
+      if (isPlatformBrowser(this.platformId)) {
+        localStorage.setItem('userInfo', JSON.stringify(userInfo));
+      }
+    } catch (error) {
+      console.error('Error decoding token:', error);
     }
   }
 
@@ -79,6 +110,8 @@ export class AuthApiService {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('jwt');
       localStorage.removeItem('role');
+      localStorage.removeItem('userInfo');
+      localStorage.removeItem('hallTicketStatus');
     }
   }
 }

@@ -100,6 +100,7 @@
           <div class="stats-row">
             <div class="stat-item">
               <div class="stat-icon stat-total">
+                <span class="emoji-icon">📚</span>
                 <i class="bi bi-clipboard-check"></i>
               </div>
               <div class="stat-content">
@@ -109,6 +110,7 @@
             </div>
             <div class="stat-item">
               <div class="stat-icon stat-upcoming">
+                <span class="emoji-icon">🔜</span>
                 <i class="bi bi-hourglass-split"></i>
               </div>
               <div class="stat-content">
@@ -118,12 +120,21 @@
             </div>
             <div class="stat-item">
               <div class="stat-icon stat-completed">
+                <span class="emoji-icon">✅</span>
                 <i class="bi bi-check-circle"></i>
               </div>
               <div class="stat-content">
                 <div class="stat-number">{{ series.completedExams }}</div>
                 <div class="stat-label">Completed</div>
               </div>
+            </div>
+          </div>
+          
+          <!-- Hall Ticket Status -->
+          <div class="hall-ticket-status" *ngIf="getExamSeriesStatus(series) === 'completed'">
+            <div class="hall-ticket-badge" [class.released]="isHallTicketReleased(series.id)">
+              <span *ngIf="isHallTicketReleased(series.id)">🎫 Hall Tickets Released</span>
+              <span *ngIf="!isHallTicketReleased(series.id)">⏳ Hall Tickets Pending</span>
             </div>
           </div>
         </div>
