@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { ExamService, ExamSeriesResponse } from '../../services/exam.service';
 
 @Component({
   selector: 'app-manage-exams',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './manage-exams.component.html',
   styleUrl: './manage-exams.component.css'
 })
