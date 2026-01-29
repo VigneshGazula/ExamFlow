@@ -180,7 +180,7 @@
                 class="btn hall-ticket-btn"
                 [class.btn-success]="isHallTicketReleased(series.id)"
                 [class.btn-outline-success]="!isHallTicketReleased(series.id)"
-                (click)="toggleHallTicket(series.id)">
+                (click)="openReleaseModal(series)">
                 <span *ngIf="isHallTicketReleased(series.id)">🎫 Hall Tickets Released</span>
                 <span *ngIf="!isHallTicketReleased(series.id)">🎫 Release Hall Tickets</span>
               </button>
@@ -221,6 +221,200 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hall Ticket Release Modal -->
+<div class="modal-backdrop" *ngIf="showReleaseModal" (click)="closeReleaseModal()"></div>
+
+<div class="release-modal" *ngIf="showReleaseModal">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <div class="header-left">
+        <div class="modal-icon">
+          <span class="emoji-icon">🎫</span>
+          <i class="bi bi-ticket-perforated"></i>
+        </div>
+        <div>
+          <h2 class="modal-title">Release Hall Tickets</h2>
+          <p class="modal-subtitle">{{ selectedExamSeriesForRelease?.name }}</p>
+        </div>
+      </div>
+      <button class="btn-close-modal" (click)="closeReleaseModal()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <!-- Info Banner -->
+      <div class="info-banner-modal">
+        <i class="bi bi-info-circle-fill"></i>
+        <p>Select the branches, sections, and students who should receive hall tickets for this exam series.</p>
+      </div>
+
+      <!-- Selection Sections -->
+      <div class="selection-grid">
+        <!-- Branches Section -->
+        <div class="selection-card">
+          <div class="selection-header">
+            <div class="header-info">
+              <i class="bi bi-building"></i>
+              <h3>Branches</h3>
+              <span class="count-badge">{{ selectedBranches.size }}/{{ availableBranches.length }}</span>
+            </div>
+            <label class="select-all-label">
+              <input 
+                type="checkbox" 
+                [checked]="selectAllBranches"
+                (change)="toggleSelectAllBranches()"
+                class="select-all-checkbox">
+              <span>Select All</span>
+            </label>
+          </div>
+          <div class="selection-list">
+            <label 
+              *ngFor="let branch of availableBranches" 
+              class="selection-item"
+              [class.selected]="selectedBranches.has(branch)">
+              <input 
+                type="checkbox" 
+                [checked]="selectedBranches.has(branch)"
+                (change)="toggleBranchSelection(branch)">
+              <span class="item-name">
+                <span class="emoji-icon">🏢</span>
+                {{ branch }}
+              </span>
+              <i class="bi bi-check-circle-fill check-icon"></i>
+            </label>
+          </div>
+        </div>
+
+        <!-- Sections Section -->
+        <div class="selection-card">
+          <div class="selection-header">
+            <div class="header-info">
+              <i class="bi bi-collection"></i>
+              <h3>Sections</h3>
+              <span class="count-badge">{{ selectedSections.size }}/{{ availableSections.length }}</span>
+            </div>
+            <label class="select-all-label">
+              <input 
+                type="checkbox" 
+                [checked]="selectAllSections"
+                (change)="toggleSelectAllSections()"
+                class="select-all-checkbox">
+              <span>Select All</span>
+            </label>
+          </div>
+          <div class="selection-list">
+            <label 
+              *ngFor="let section of availableSections" 
+              class="selection-item"
+              [class.selected]="selectedSections.has(section)">
+              <input 
+                type="checkbox" 
+                [checked]="selectedSections.has(section)"
+                (change)="toggleSectionSelection(section)">
+              <span class="item-name">
+                <span class="emoji-icon">📑</span>
+                Section {{ section }}
+              </span>
+              <i class="bi bi-check-circle-fill check-icon"></i>
+            </label>
+          </div>
+        </div>
+
+        <!-- Students Section (Full Width) -->
+        <div class="selection-card students-card">
+          <div class="selection-header">
+            <div class="header-info">
+              <i class="bi bi-people-fill"></i>
+              <h3>Students</h3>
+              <span class="count-badge">{{ selectedStudents.size }}/{{ getFilteredStudents().length }}</span>
+            </div>
+            <label class="select-all-label">
+              <input 
+                type="checkbox" 
+                [checked]="selectAllStudents"
+                (change)="toggleSelectAllStudents()"
+                class="select-all-checkbox">
+              <span>Select All</span>
+            </label>
+          </div>
+          
+          <!-- Filter Info -->
+          <div class="filter-info" *ngIf="selectedBranches.size > 0 || selectedSections.size > 0">
+            <i class="bi bi-funnel-fill"></i>
+            <span>Filtered by: </span>
+            <span class="filter-tag" *ngFor="let branch of selectedBranches">{{ branch }}</span>
+            <span class="filter-tag" *ngFor="let section of selectedSections">Section {{ section }}</span>
+          </div>
+
+          <div class="students-list">
+            <label 
+              *ngFor="let student of getFilteredStudents()" 
+              class="selection-item student-item"
+              [class.selected]="selectedStudents.has(student.id)">
+              <input 
+                type="checkbox" 
+                [checked]="selectedStudents.has(student.id)"
+                (change)="toggleStudentSelection(student.id)">
+              <div class="student-info">
+                <div class="student-avatar">
+                  <span>{{ student.name.charAt(0) }}</span>
+                </div>
+                <div class="student-details">
+                  <span class="student-name">{{ student.name }}</span>
+                  <span class="student-meta">{{ student.rollNumber }} • {{ student.branch }} • Section {{ student.section }}</span>
+                </div>
+              </div>
+              <i class="bi bi-check-circle-fill check-icon"></i>
+            </label>
+
+            <!-- Empty State -->
+            <div class="empty-students" *ngIf="getFilteredStudents().length === 0">
+              <i class="bi bi-person-x"></i>
+              <p>No students match the selected filters</p>
+              <small>Please select branches or sections</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <div class="footer-summary">
+        <div class="summary-item">
+          <i class="bi bi-building"></i>
+          <span>{{ selectedBranches.size }} Branches</span>
+        </div>
+        <div class="summary-item">
+          <i class="bi bi-collection"></i>
+          <span>{{ selectedSections.size }} Sections</span>
+        </div>
+        <div class="summary-item">
+          <i class="bi bi-people-fill"></i>
+          <span>{{ selectedStudents.size }} Students</span>
+        </div>
+      </div>
+      <div class="footer-actions">
+        <button class="btn btn-cancel" (click)="closeReleaseModal()">
+          <i class="bi bi-x-circle"></i>
+          Cancel
+        </button>
+        <button 
+          class="btn btn-release" 
+          (click)="releaseHallTickets()"
+          [disabled]="selectedStudents.size === 0">
+          <i class="bi bi-send-check-fill"></i>
+          Release Hall Tickets
+          <span class="emoji-icon">🎫</span>
+        </button>
       </div>
     </div>
   </div>
