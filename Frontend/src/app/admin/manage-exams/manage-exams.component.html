@@ -159,6 +159,14 @@
                 <i class="bi bi-clock me-1"></i>
                 {{ formatDate(series.createdAt) }}
               </small>
+              
+              <!-- Hall Ticket Released Status Badge -->
+              <div *ngIf="isCompleted(series) && isHallTicketReleased(series.id)" class="mt-2">
+                <span class="hall-ticket-released-badge">
+                  <i class="bi bi-check-circle-fill me-1"></i>
+                  🎫 Hall Tickets Released
+                </span>
+              </div>
             </div>
           </div>
 
@@ -228,6 +236,22 @@
 
 <!-- Hall Ticket Release Modal -->
 <div class="modal-backdrop" *ngIf="showReleaseModal" (click)="closeReleaseModal()"></div>
+
+<!-- Success Animation Overlay -->
+<div class="success-overlay" *ngIf="showSuccessAnimation">
+  <div class="success-animation">
+    <div class="success-checkmark">
+      <div class="check-icon">
+        <span class="icon-line line-tip"></span>
+        <span class="icon-line line-long"></span>
+        <div class="icon-circle"></div>
+        <div class="icon-fix"></div>
+      </div>
+    </div>
+    <h2 class="success-title">🎫 Hall Tickets Sent!</h2>
+    <p class="success-message">Students will receive their hall tickets shortly</p>
+  </div>
+</div>
 
 <div class="release-modal" *ngIf="showReleaseModal">
   <div class="modal-container" (click)="$event.stopPropagation()">
@@ -422,10 +446,12 @@
         <button 
           class="btn btn-release" 
           (click)="releaseHallTickets()"
-          [disabled]="selectedStudents.size === 0">
-          <i class="bi bi-send-check-fill"></i>
-          Release Hall Tickets
-          <span class="emoji-icon">🎫</span>
+          [disabled]="selectedStudents.size === 0 || isReleasingHallTickets">
+          <span class="spinner-border spinner-border-sm" *ngIf="isReleasingHallTickets"></span>
+          <i class="bi bi-send-check-fill" *ngIf="!isReleasingHallTickets"></i>
+          <span *ngIf="!isReleasingHallTickets">Release Hall Tickets</span>
+          <span *ngIf="isReleasingHallTickets">Sending...</span>
+          <span class="emoji-icon" *ngIf="!isReleasingHallTickets">🎫</span>
         </button>
       </div>
     </div>

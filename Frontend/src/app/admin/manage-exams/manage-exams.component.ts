@@ -31,6 +31,10 @@ export class ManageExamsComponent implements OnInit {
   studentsList: StudentForHallTicket[] = [];
   isLoadingStudents = false;
   
+  // Release animation
+  isReleasingHallTickets = false;
+  showSuccessAnimation = false;
+  
   // Selection state
   selectedBranches: Set<string> = new Set();
   selectedSections: Set<string> = new Set();
@@ -381,29 +385,49 @@ export class ManageExamsComponent implements OnInit {
 
     console.log('Releasing Hall Tickets:', requestData);
 
+    // Start releasing animation
+    this.isReleasingHallTickets = true;
+
     // Call backend API
     this.hallTicketService.releaseHallTickets(requestData).subscribe({
       next: (response) => {
         console.log('Release response:', response);
 
-        // Show success message with details
-        alert(`🎫 Hall Tickets Released!\n\n` +
-              `Exam Series: ${this.selectedExamSeriesForRelease!.name}\n` +
-              `Branches: ${requestData.branches.join(', ') || 'All'}\n` +
-              `Sections: ${requestData.sections.join(', ') || 'All'}\n\n` +
-              `✅ Newly Released: ${response.newlyReleased}\n` +
-              `ℹ️ Already Released: ${response.alreadyReleased}\n` +
-              `📊 Total: ${response.totalStudents}\n\n` +
-              `${response.message}`);
+        // Stop releasing, show success
+        this.isReleasingHallTickets = false;
+        this.showSuccessAnimation = true;
 
-        // Reload students to update status
-        this.loadStudents();
+        // Update hall ticket status
+        this.hallTicketStatus[this.selectedExamSeriesForRelease!.id] = true;
+        localStorage.setItem('hallTicketStatus', JSON.stringify(this.hallTicketStatus));
 
-        // Close modal
-        this.closeReleaseModal();
+        // Hide success animation after 3 seconds
+        setTimeout(() => {
+          this.showSuccessAnimation = false;
+          
+          // Show detailed success message
+          alert(`🎫 Hall Tickets Released!\n\n` +
+                `Exam Series: ${this.selectedExamSeriesForRelease!.name}\n` +
+                `Branches: ${requestData.branches.join(', ') || 'All'}\n` +
+                `Sections: ${requestData.sections.join(', ') || 'All'}\n\n` +
+                `✅ Newly Released: ${response.newlyReleased}\n` +
+                `ℹ️ Already Released: ${response.alreadyReleased}\n` +
+                `📊 Total: ${response.totalStudents}\n\n` +
+                `${response.message}`);
+
+          // Reload students to update status
+          this.loadStudents();
+
+          // Close modal
+          this.closeReleaseModal();
+        }, 3000);
       },
       error: (error) => {
         console.error('Error releasing hall tickets:', error);
+        
+        // Stop releasing animation
+        this.isReleasingHallTickets = false;
+        this.showSuccessAnimation = false;
         
         if (error.status === 401) {
           this.errorMessage = 'Session expired. Please login again.';
