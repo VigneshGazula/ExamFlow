@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { ExamService, StudentExamSeriesResponse } from '../../services/exam.service';
-import { StudentProfileService } from '../../services/student-profile.service';
+import { HallTicketService, ExamSeriesEligibility, HallTicketDownload } from '../../services/hall-ticket.service';
 
 @Component({
   selector: 'app-hall-ticket',
@@ -12,42 +11,137 @@ import { StudentProfileService } from '../../services/student-profile.service';
   styleUrl: './hall-ticket.component.css'
 })
 export class HallTicketComponent implements OnInit {
-  examSeriesList: StudentExamSeriesResponse[] = [];
-  completedExamSeries: StudentExamSeriesResponse[] = [];
+  examSeriesList: ExamSeriesEligibility[] = [];
   isLoading = true;
   errorMessage = '';
-  studentBranch = '';
-  studentBranchCode = '';
-  studentYear = 0;
-  hallTicketStatus: { [key: string]: boolean } = {};
-
-  // Map department names to branch codes
-  private departmentToBranch: { [key: string]: string } = {
-    'Computer Science': 'CSE',
-    'Information Technology': 'IT',
-    'Electronics and Communication': 'ECE',
-    'Electrical Engineering': 'EEE',
-    'Mechanical Engineering': 'MECH',
-    'Civil Engineering': 'CIVIL',
-    'Chemical Engineering': 'CHEM'
-  };
+  
+  // Download state
+  isDownloading = false;
+  downloadingExamId: string | null = null;
+  hallTicketData: HallTicketDownload | null = null;
+  showHallTicketModal = false;
 
   constructor(
-    private examService: ExamService,
-    private studentProfileService: StudentProfileService,
+    private hallTicketService: HallTicketService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.loadStudentProfile();
+    this.loadExamSeries();
   }
 
-  loadStudentProfile(): void {
-    this.studentProfileService.getProfile().subscribe({
-      next: (profile) => {
-        this.studentBranch = profile.department;
-        this.studentBranchCode = this.departmentToBranch[profile.department] || profile.department;
-        this.studentYear = parseInt(profile.year);
+  loadExamSeries(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+
+    this.hallTicketService.getStudentExamSeries().subscribe({
+      next: (data) => {
+        this.examSeriesList = data;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading exam series:', error);
+        this.isLoading = false;
+        
+        if (error.status === 401) {
+          this.errorMessage = 'Session expired. Please login again.';
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 2000);
+        } else {
+          this.errorMessage = 'Failed to load hall tickets. Please try again.';
+        }
+      }
+    });
+  }
+
+  downloadHallTicket(examSeriesId: string): void {
+    this.isDownloading = true;
+    this.downloadingExamId = examSeriesId;
+
+    this.hallTicketService.downloadHallTicket(examSeriesId).subscribe({
+      next: (data) => {
+        this.hallTicketData = data;
+        this.showHallTicketModal = true;
+        this.isDownloading = false;
+        this.downloadingExamId = null;
+      },
+      error: (error) => {
+        console.error('Error downloading hall ticket:', error);
+        this.isDownloading = false;
+        this.downloadingExamId = null;
+        
+        if (error.status === 401) {
+          this.errorMessage = 'Session expired. Please login again.';
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 2000);
+        } else if (error.status === 404) {
+          alert('Hall ticket not available. Either you are not eligible or it hasn\'t been released yet.');
+        } else {
+          alert('Failed to download hall ticket. Please try again.');
+        }
+      }
+    });
+  }
+
+  closeHallTicketModal(): void {
+    this.showHallTicketModal = false;
+    this.hallTicketData = null;
+  }
+
+  printHallTicket(): void {
+    window.print();
+  }
+
+  getStatusClass(series: ExamSeriesEligibility): string {
+    if (!series.isEligible) {
+      return 'not-eligible';
+    } else if (series.studentHasHallTicket) {
+      return 'released';
+    } else {
+      return 'pending';
+    }
+  }
+
+  getStatusText(series: ExamSeriesEligibility): string {
+    if (!series.isEligible) {
+      return 'Not Released for Department';
+    } else if (series.studentHasHallTicket) {
+      return 'Hall Ticket Available';
+    } else {
+      return 'Released for Department - Pending for You';
+    }
+  }
+
+  getStatusIcon(series: ExamSeriesEligibility): string {
+    if (!series.isEligible) {
+      return 'bi-x-circle';
+    } else if (series.studentHasHallTicket) {
+      return 'bi-check-circle-fill';
+    } else {
+      return 'bi-hourglass-split';
+    }
+  }
+
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-IN', { 
+      day: '2-digit', 
+      month: 'short', 
+      year: 'numeric' 
+    });
+  }
+
+  formatTime(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-IN', { 
+      day: '2-digit', 
+      month: '2-digit', 
+      year: 'numeric' 
+    });
+  }
+}
         this.loadExamSeries();
       },
       error: (error) => {
