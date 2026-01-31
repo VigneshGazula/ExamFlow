@@ -3,23 +3,112 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ExamFlowWebApi.Entities;
 using ExamFlowWebApi.DTO.HallTicket;
+using ExamFlowWebApi.Services.Interfaces;
+using System.Security.Claims;
 
 namespace ExamFlowWebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
     public class HallTicketController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IHallTicketService _hallTicketService;
 
-        public HallTicketController(ApplicationDbContext context)
+        public HallTicketController(
+            ApplicationDbContext context,
+            IHallTicketService hallTicketService)
         {
             _context = context;
+            _hallTicketService = hallTicketService;
         }
 
-        // GET: api/hallticket/students?examSeriesId=xxx
+        // POST: api/hallticket/release
+        [HttpPost("release")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ReleaseHallTicketResponse>> ReleaseHallTickets(
+            [FromBody] ReleaseHallTicketRequest request)
+        {
+            try
+            {
+                var response = await _hallTicketService.ReleaseHallTicketsAsync(request);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error releasing hall tickets", error = ex.Message });
+            }
+        }
+
+        // GET: api/hallticket/student
+        [HttpGet("student")]
+        [Authorize(Roles = "Student")]
+        public async Task<ActionResult<List<ExamSeriesEligibilityDTO>>> GetStudentExamSeries()
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized(new { message = "User ID not found in token" });
+                }
+
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+                
+                if (user == null)
+                {
+                    return NotFound(new { message = "User not found" });
+                }
+
+                var examSeries = await _hallTicketService.GetExamSeriesWithEligibilityAsync(user.Id);
+                return Ok(examSeries);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error fetching exam series", error = ex.Message });
+            }
+        }
+
+        // GET: api/hallticket/{examSeriesId}/download
+        [HttpGet("{examSeriesId}/download")]
+        [Authorize(Roles = "Student")]
+        public async Task<ActionResult<HallTicketDownloadDTO>> DownloadHallTicket(Guid examSeriesId)
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized(new { message = "User ID not found in token" });
+                }
+
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+                
+                if (user == null)
+                {
+                    return NotFound(new { message = "User not found" });
+                }
+
+                var hallTicket = await _hallTicketService.GetHallTicketForDownloadAsync(user.Id, examSeriesId);
+                
+                if (hallTicket == null)
+                {
+                    return NotFound(new { message = "Hall ticket not available. Either you are not eligible or it hasn't been released yet." });
+                }
+
+                return Ok(hallTicket);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error downloading hall ticket", error = ex.Message });
+            }
+        }
+
+        // GET: api/hallticket/students (Admin only)
         [HttpGet("students")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<List<StudentForHallTicketDTO>>> GetStudentsForHallTicket(
             [FromQuery] Guid? examSeriesId,
             [FromQuery] List<string>? branches,
@@ -28,47 +117,11 @@ namespace ExamFlowWebApi.Controllers
         {
             try
             {
-                // Start with all students who have profiles and are active
-                var query = _context.Users
-                    .Include(u => u.StudentProfile)
-                    .Where(u => u.Role == "Student" && 
-                               u.IsActive && 
-                               u.StudentProfile != null);
-
-                // Filter by branches if provided
-                if (branches != null && branches.Any())
-                {
-                    query = query.Where(u => branches.Contains(u.StudentProfile!.Department));
-                }
-
-                // Filter by sections if provided
-                if (sections != null && sections.Any())
-                {
-                    query = query.Where(u => sections.Contains(u.StudentProfile!.Section));
-                }
-
-                // Filter by year if provided
-                if (!string.IsNullOrEmpty(year))
-                {
-                    query = query.Where(u => u.StudentProfile!.Year == year);
-                }
-
-                var students = await query
-                    .Select(u => new StudentForHallTicketDTO
-                    {
-                        Id = u.Id,
-                        UserId = u.UserId,
-                        FullName = u.FullName,
-                        Email = u.Email,
-                        RollNumber = u.StudentProfile!.RollNumber,
-                        Department = u.StudentProfile.Department,
-                        Year = u.StudentProfile.Year,
-                        Section = u.StudentProfile.Section
-                    })
-                    .OrderBy(s => s.Department)
-                    .ThenBy(s => s.Section)
-                    .ThenBy(s => s.RollNumber)
-                    .ToListAsync();
+                var students = await _hallTicketService.GetStudentsForHallTicketAsync(
+                    examSeriesId,
+                    branches,
+                    sections,
+                    year);
 
                 return Ok(students);
             }
@@ -80,6 +133,7 @@ namespace ExamFlowWebApi.Controllers
 
         // GET: api/hallticket/students/count
         [HttpGet("students/count")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<Dictionary<string, int>>> GetStudentsCount(
             [FromQuery] Guid? examSeriesId)
         {
@@ -107,76 +161,9 @@ namespace ExamFlowWebApi.Controllers
             }
         }
 
-        // POST: api/hallticket/release
-        [HttpPost("release")]
-        public async Task<ActionResult<ReleaseHallTicketResponse>> ReleaseHallTickets(
-            [FromBody] ReleaseHallTicketRequest request)
-        {
-            try
-            {
-                // Validate request
-                if (request.ExamSeriesId == Guid.Empty)
-                {
-                    return BadRequest(new { message = "Exam series ID is required" });
-                }
-
-                if (!request.StudentIds.Any())
-                {
-                    return BadRequest(new { message = "At least one student must be selected" });
-                }
-
-                // Verify exam series exists
-                var examSeries = await _context.ExamSeries
-                    .FirstOrDefaultAsync(es => es.Id == request.ExamSeriesId);
-
-                if (examSeries == null)
-                {
-                    return NotFound(new { message = "Exam series not found" });
-                }
-
-                // Get selected students
-                var students = await _context.Users
-                    .Include(u => u.StudentProfile)
-                    .Where(u => request.StudentIds.Contains(u.Id) && 
-                               u.Role == "Student" && 
-                               u.IsActive)
-                    .ToListAsync();
-
-                if (!students.Any())
-                {
-                    return NotFound(new { message = "No valid students found" });
-                }
-
-                // Here you would typically:
-                // 1. Generate hall ticket PDFs
-                // 2. Store hall ticket records in database
-                // 3. Send email notifications
-                // For now, we'll just return success
-
-                var response = new ReleaseHallTicketResponse
-                {
-                    Success = true,
-                    Message = $"Hall tickets released successfully for {students.Count} students",
-                    TotalStudents = students.Count,
-                    ReleasedStudentIds = students.Select(s => s.UserId).ToList()
-                };
-
-                // Log the release action (you can add audit logging here)
-                Console.WriteLine($"Hall tickets released for exam series {request.ExamSeriesId}");
-                Console.WriteLine($"Branches: {string.Join(", ", request.Branches)}");
-                Console.WriteLine($"Sections: {string.Join(", ", request.Sections)}");
-                Console.WriteLine($"Students: {students.Count}");
-
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Error releasing hall tickets", error = ex.Message });
-            }
-        }
-
         // GET: api/hallticket/branches
         [HttpGet("branches")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<List<string>>> GetAvailableBranches()
         {
             try
@@ -201,6 +188,7 @@ namespace ExamFlowWebApi.Controllers
 
         // GET: api/hallticket/sections
         [HttpGet("sections")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<List<string>>> GetAvailableSections()
         {
             try

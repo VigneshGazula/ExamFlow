@@ -26,6 +26,7 @@ builder.Services.AddScoped<IUserRespository, UserRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IStudentProfileService, StudentProfileService>();
 builder.Services.AddScoped<IExamService, ExamService>();
+builder.Services.AddScoped<IHallTicketService, HallTicketService>();
 builder.Services.AddSingleton<JwtTokenGenerator>();
 builder.Services.AddScoped<PasswordService>();
 

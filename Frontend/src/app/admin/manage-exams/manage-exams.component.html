@@ -366,7 +366,8 @@
             <label 
               *ngFor="let student of getFilteredStudents()" 
               class="selection-item student-item"
-              [class.selected]="selectedStudents.has(student.id)">
+              [class.selected]="selectedStudents.has(student.id)"
+              [class.already-released]="student.hallTicketReleased">
               <input 
                 type="checkbox" 
                 [checked]="selectedStudents.has(student.id)"
@@ -376,7 +377,10 @@
                   <span>{{ student.fullName.charAt(0) }}</span>
                 </div>
                 <div class="student-details">
-                  <span class="student-name">{{ student.fullName }}</span>
+                  <span class="student-name">
+                    {{ student.fullName }}
+                    <span class="released-badge" *ngIf="student.hallTicketReleased">✅ Released</span>
+                  </span>
                   <span class="student-meta">{{ student.rollNumber }} • {{ student.department }} • Section {{ student.section }}</span>
                 </div>
               </div>

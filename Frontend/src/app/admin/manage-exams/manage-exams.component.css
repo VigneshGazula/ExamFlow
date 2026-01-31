@@ -696,6 +696,16 @@ h2 {
   border-color: #667eea;
 }
 
+.student-item.already-released {
+  background: linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%);
+  border-color: #10b981;
+}
+
+.student-item.already-released.selected {
+  background: linear-gradient(135deg, #a7f3d0 0%, #d1fae5 100%);
+  border-color: #059669;
+}
+
 .student-info {
   flex: 1;
   display: flex;
@@ -731,6 +741,20 @@ h2 {
 .student-meta {
   font-size: 0.85rem;
   color: #718096;
+}
+
+.released-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.5rem;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-left: 0.5rem;
+  vertical-align: middle;
 }
 
 /* Empty Students */

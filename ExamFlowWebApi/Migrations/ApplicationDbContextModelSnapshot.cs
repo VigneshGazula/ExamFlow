@@ -104,6 +104,47 @@ namespace ExamFlowWebApi.Migrations
                     b.ToTable("ExamSeries");
                 });
 
+            modelBuilder.Entity("ExamFlowWebApi.Models.HallTicket", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid>("ExamSeriesId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("HallTicketNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime>("IssuedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Remarks")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExamSeriesId");
+
+                    b.HasIndex("StudentId", "ExamSeriesId")
+                        .IsUnique();
+
+                    b.ToTable("HallTickets");
+                });
+
             modelBuilder.Entity("ExamFlowWebApi.Models.StudentProfile", b =>
                 {
                     b.Property<int>("Id")
@@ -191,6 +232,25 @@ namespace ExamFlowWebApi.Migrations
                         .IsRequired();
 
                     b.Navigation("ExamSeries");
+                });
+
+            modelBuilder.Entity("ExamFlowWebApi.Models.HallTicket", b =>
+                {
+                    b.HasOne("ExamFlowWebApi.Models.ExamSeries", "ExamSeries")
+                        .WithMany()
+                        .HasForeignKey("ExamSeriesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ExamFlowWebApi.Models.User", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ExamSeries");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("ExamFlowWebApi.Models.StudentProfile", b =>

@@ -14,6 +14,7 @@ namespace ExamFlowWebApi.Entities
         public DbSet<StudentProfile> StudentProfiles { get; set; }
         public DbSet<ExamSeries> ExamSeries { get; set; }
         public DbSet<Exam> Exams { get; set; }
+        public DbSet<HallTicket> HallTickets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -67,6 +68,23 @@ namespace ExamFlowWebApi.Entities
             modelBuilder.Entity<Exam>()
                 .HasIndex(e => new { e.ExamSeriesId, e.Branch, e.ExamDate })
                 .IsUnique();
+
+            // Configure HallTicket - unique constraint for one hall ticket per student per exam series
+            modelBuilder.Entity<HallTicket>()
+                .HasIndex(ht => new { ht.StudentId, ht.ExamSeriesId })
+                .IsUnique();
+
+            modelBuilder.Entity<HallTicket>()
+                .HasOne(ht => ht.Student)
+                .WithMany()
+                .HasForeignKey(ht => ht.StudentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<HallTicket>()
+                .HasOne(ht => ht.ExamSeries)
+                .WithMany()
+                .HasForeignKey(ht => ht.ExamSeriesId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

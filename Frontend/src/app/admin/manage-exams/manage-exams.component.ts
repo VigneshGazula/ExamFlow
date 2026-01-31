@@ -375,7 +375,8 @@ export class ManageExamsComponent implements OnInit {
       examSeriesId: this.selectedExamSeriesForRelease.id,
       branches: Array.from(this.selectedBranches),
       sections: Array.from(this.selectedSections),
-      studentIds: Array.from(this.selectedStudents)
+      studentIds: Array.from(this.selectedStudents),
+      selectAll: false
     };
 
     console.log('Releasing Hall Tickets:', requestData);
@@ -385,16 +386,18 @@ export class ManageExamsComponent implements OnInit {
       next: (response) => {
         console.log('Release response:', response);
 
-        // Update hall ticket status
-        this.toggleHallTicket(this.selectedExamSeriesForRelease!.id);
-
-        // Show success message
+        // Show success message with details
         alert(`🎫 Hall Tickets Released!\n\n` +
               `Exam Series: ${this.selectedExamSeriesForRelease!.name}\n` +
-              `Branches: ${requestData.branches.join(', ')}\n` +
-              `Sections: ${requestData.sections.join(', ')}\n` +
-              `Total Students: ${response.totalStudents}\n\n` +
-              `✅ ${response.message}`);
+              `Branches: ${requestData.branches.join(', ') || 'All'}\n` +
+              `Sections: ${requestData.sections.join(', ') || 'All'}\n\n` +
+              `✅ Newly Released: ${response.newlyReleased}\n` +
+              `ℹ️ Already Released: ${response.alreadyReleased}\n` +
+              `📊 Total: ${response.totalStudents}\n\n` +
+              `${response.message}`);
+
+        // Reload students to update status
+        this.loadStudents();
 
         // Close modal
         this.closeReleaseModal();

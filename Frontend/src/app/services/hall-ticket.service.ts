@@ -12,6 +12,7 @@ export interface StudentForHallTicket {
   department: string;
   year: string;
   section: string;
+  hallTicketReleased: boolean;
 }
 
 export interface ReleaseHallTicketRequest {
@@ -19,13 +20,46 @@ export interface ReleaseHallTicketRequest {
   branches: string[];
   sections: string[];
   studentIds: number[];
+  selectAll: boolean;
 }
 
 export interface ReleaseHallTicketResponse {
   success: boolean;
   message: string;
   totalStudents: number;
+  newlyReleased: number;
+  alreadyReleased: number;
   releasedStudentIds: string[];
+}
+
+export interface ExamSeriesEligibility {
+  id: string;
+  name: string;
+  examType: number;
+  examTypeName: string;
+  startDate: string;
+  endDate: string;
+  year: number;
+  status: string;
+  isEligible: boolean;
+  studentHasHallTicket: boolean;
+}
+
+export interface HallTicketDownload {
+  hallTicketNumber: string;
+  studentName: string;
+  rollNumber: string;
+  department: string;
+  examSeriesName: string;
+  issuedAt: string;
+  examSchedule: ExamSchedule[];
+}
+
+export interface ExamSchedule {
+  subjectName: string;
+  subjectCode: string;
+  examDate: string;
+  examTime: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -50,7 +84,7 @@ export class HallTicketService {
     });
   }
 
-  // Get students with filters
+  // Get students with filters (Admin)
   getStudentsForHallTicket(
     examSeriesId?: string,
     branches?: string[],
@@ -82,20 +116,7 @@ export class HallTicketService {
     });
   }
 
-  // Get student counts
-  getStudentsCount(examSeriesId?: string): Observable<any> {
-    let params = new HttpParams();
-    if (examSeriesId) {
-      params = params.set('examSeriesId', examSeriesId);
-    }
-
-    return this.http.get(`${this.apiUrl}/students/count`, {
-      headers: this.getHeaders(),
-      params: params
-    });
-  }
-
-  // Release hall tickets
+  // Release hall tickets (Admin)
   releaseHallTickets(request: ReleaseHallTicketRequest): Observable<ReleaseHallTicketResponse> {
     return this.http.post<ReleaseHallTicketResponse>(
       `${this.apiUrl}/release`,
@@ -104,17 +125,33 @@ export class HallTicketService {
     );
   }
 
-  // Get available branches
+  // Get exam series with eligibility status (Student)
+  getStudentExamSeries(): Observable<ExamSeriesEligibility[]> {
+    return this.http.get<ExamSeriesEligibility[]>(`${this.apiUrl}/student`, {
+      headers: this.getHeaders()
+    });
+  }
+
+  // Download hall ticket data (Student)
+  downloadHallTicket(examSeriesId: string): Observable<HallTicketDownload> {
+    return this.http.get<HallTicketDownload>(
+      `${this.apiUrl}/${examSeriesId}/download`,
+      { headers: this.getHeaders() }
+    );
+  }
+
+  // Get available branches (Admin)
   getAvailableBranches(): Observable<string[]> {
     return this.http.get<string[]>(`${this.apiUrl}/branches`, {
       headers: this.getHeaders()
     });
   }
 
-  // Get available sections
+  // Get available sections (Admin)
   getAvailableSections(): Observable<string[]> {
     return this.http.get<string[]>(`${this.apiUrl}/sections`, {
       headers: this.getHeaders()
     });
   }
 }
+
