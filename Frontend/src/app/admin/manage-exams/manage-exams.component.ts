@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ExamService, ExamSeriesResponse } from '../../services/exam.service';
+import { HallTicketService, StudentForHallTicket } from '../../services/hall-ticket.service';
 
 @Component({
   selector: 'app-manage-exams',
@@ -26,13 +27,14 @@ export class ManageExamsComponent implements OnInit {
   
   // Form data
   availableBranches: string[] = [];
-  availableSections: string[] = ['A', 'B', 'C', 'D'];
-  studentsList: any[] = [];
+  availableSections: string[] = [];
+  studentsList: StudentForHallTicket[] = [];
+  isLoadingStudents = false;
   
   // Selection state
   selectedBranches: Set<string> = new Set();
   selectedSections: Set<string> = new Set();
-  selectedStudents: Set<string> = new Set();
+  selectedStudents: Set<number> = new Set();
   
   // Select all states
   selectAllBranches = false;
@@ -48,6 +50,7 @@ export class ManageExamsComponent implements OnInit {
 
   constructor(
     private examService: ExamService,
+    private hallTicketService: HallTicketService,
     private router: Router
   ) {}
 
@@ -180,7 +183,6 @@ export class ManageExamsComponent implements OnInit {
 
   openReleaseModal(series: ExamSeriesResponse): void {
     this.selectedExamSeriesForRelease = series;
-    this.availableBranches = series.branches;
     this.showReleaseModal = true;
     
     // Reset selections
@@ -190,9 +192,69 @@ export class ManageExamsComponent implements OnInit {
     this.selectAllBranches = false;
     this.selectAllSections = false;
     this.selectAllStudents = false;
+    this.studentsList = [];
     
-    // Generate mock student list
-    this.generateMockStudents();
+    // Load available branches from exam series
+    this.availableBranches = series.branches;
+    
+    // Load available sections from database
+    this.loadAvailableSections();
+    
+    // Load students without filters initially
+    this.loadStudents();
+  }
+
+  loadAvailableSections(): void {
+    this.hallTicketService.getAvailableSections().subscribe({
+      next: (sections) => {
+        this.availableSections = sections;
+      },
+      error: (error) => {
+        console.error('Error loading sections:', error);
+        // Fallback to default sections
+        this.availableSections = ['A', 'B', 'C', 'D'];
+      }
+    });
+  }
+
+  loadStudents(): void {
+    if (!this.selectedExamSeriesForRelease) return;
+    
+    this.isLoadingStudents = true;
+    
+    // Get year from exam series
+    const year = this.selectedExamSeriesForRelease.year.toString();
+    
+    // Get selected branches (or all available branches if none selected)
+    const branches = this.selectedBranches.size > 0 
+      ? Array.from(this.selectedBranches) 
+      : this.availableBranches;
+    
+    // Get selected sections (or undefined to get all)
+    const sections = this.selectedSections.size > 0 
+      ? Array.from(this.selectedSections) 
+      : undefined;
+    
+    this.hallTicketService.getStudentsForHallTicket(
+      this.selectedExamSeriesForRelease.id,
+      branches,
+      sections,
+      year
+    ).subscribe({
+      next: (students) => {
+        this.studentsList = students;
+        this.isLoadingStudents = false;
+        
+        // Auto-deselect students that are no longer in the list
+        this.filterStudentsBySelection();
+      },
+      error: (error) => {
+        console.error('Error loading students:', error);
+        this.errorMessage = 'Failed to load students. Please try again.';
+        this.isLoadingStudents = false;
+        this.studentsList = [];
+      }
+    });
   }
 
   closeReleaseModal(): void {
@@ -201,30 +263,8 @@ export class ManageExamsComponent implements OnInit {
     this.selectedBranches.clear();
     this.selectedSections.clear();
     this.selectedStudents.clear();
-  }
-
-  generateMockStudents(): void {
-    // Generate mock student data for demonstration
     this.studentsList = [];
-    const branches = this.availableBranches;
-    const sections = this.availableSections;
-    
-    let studentId = 1;
-    branches.forEach(branch => {
-      sections.forEach(section => {
-        // Generate 5 students per section
-        for (let i = 1; i <= 5; i++) {
-          this.studentsList.push({
-            id: `STU${studentId.toString().padStart(4, '0')}`,
-            name: `Student ${studentId}`,
-            branch: branch,
-            section: section,
-            rollNumber: `${branch}${section}${i.toString().padStart(3, '0')}`
-          });
-          studentId++;
-        }
-      });
-    });
+    this.isLoadingStudents = false;
   }
 
   toggleBranchSelection(branch: string): void {
@@ -234,7 +274,9 @@ export class ManageExamsComponent implements OnInit {
       this.selectedBranches.add(branch);
     }
     this.updateSelectAllBranches();
-    this.filterStudentsBySelection();
+    
+    // Reload students with new filter
+    this.loadStudents();
   }
 
   toggleSectionSelection(section: string): void {
@@ -244,10 +286,12 @@ export class ManageExamsComponent implements OnInit {
       this.selectedSections.add(section);
     }
     this.updateSelectAllSections();
-    this.filterStudentsBySelection();
+    
+    // Reload students with new filter
+    this.loadStudents();
   }
 
-  toggleStudentSelection(studentId: string): void {
+  toggleStudentSelection(studentId: number): void {
     if (this.selectedStudents.has(studentId)) {
       this.selectedStudents.delete(studentId);
     } else {
@@ -263,7 +307,8 @@ export class ManageExamsComponent implements OnInit {
     } else {
       this.selectedBranches.clear();
     }
-    this.filterStudentsBySelection();
+    // Reload students with new filter
+    this.loadStudents();
   }
 
   toggleSelectAllSections(): void {
@@ -273,7 +318,8 @@ export class ManageExamsComponent implements OnInit {
     } else {
       this.selectedSections.clear();
     }
-    this.filterStudentsBySelection();
+    // Reload students with new filter
+    this.loadStudents();
   }
 
   toggleSelectAllStudents(): void {
@@ -302,13 +348,12 @@ export class ManageExamsComponent implements OnInit {
   }
 
   filterStudentsBySelection(): void {
-    // Auto-deselect students that no longer match the branch/section filter
-    const filteredStudents = this.getFilteredStudents();
-    const filteredIds = new Set(filteredStudents.map(s => s.id));
+    // Auto-deselect students that no longer match the filter
+    const currentStudentIds = new Set(this.studentsList.map(s => s.id));
     
     // Remove students that are no longer in the filtered list
     Array.from(this.selectedStudents).forEach(studentId => {
-      if (!filteredIds.has(studentId)) {
+      if (!currentStudentIds.has(studentId)) {
         this.selectedStudents.delete(studentId);
       }
     });
@@ -316,45 +361,58 @@ export class ManageExamsComponent implements OnInit {
     this.updateSelectAllStudents();
   }
 
-  getFilteredStudents(): any[] {
-    if (this.selectedBranches.size === 0 && this.selectedSections.size === 0) {
-      return this.studentsList;
-    }
-    
-    return this.studentsList.filter(student => {
-      const branchMatch = this.selectedBranches.size === 0 || this.selectedBranches.has(student.branch);
-      const sectionMatch = this.selectedSections.size === 0 || this.selectedSections.has(student.section);
-      return branchMatch && sectionMatch;
-    });
+  getFilteredStudents(): StudentForHallTicket[] {
+    // Students are already filtered from the API
+    return this.studentsList;
   }
 
   releaseHallTickets(): void {
-    if (!this.selectedExamSeriesForRelease) return;
+    if (!this.selectedExamSeriesForRelease || this.selectedStudents.size === 0) {
+      return;
+    }
 
-    const selectedData = {
+    const requestData = {
       examSeriesId: this.selectedExamSeriesForRelease.id,
-      examSeriesName: this.selectedExamSeriesForRelease.name,
       branches: Array.from(this.selectedBranches),
       sections: Array.from(this.selectedSections),
-      students: Array.from(this.selectedStudents),
-      totalStudents: this.selectedStudents.size
+      studentIds: Array.from(this.selectedStudents)
     };
 
-    console.log('Releasing Hall Tickets:', selectedData);
+    console.log('Releasing Hall Tickets:', requestData);
 
-    // Update hall ticket status
-    this.toggleHallTicket(this.selectedExamSeriesForRelease.id);
+    // Call backend API
+    this.hallTicketService.releaseHallTickets(requestData).subscribe({
+      next: (response) => {
+        console.log('Release response:', response);
 
-    // Show success message
-    alert(`🎫 Hall Tickets Released!\n\n` +
-          `Exam Series: ${selectedData.examSeriesName}\n` +
-          `Branches: ${selectedData.branches.join(', ')}\n` +
-          `Sections: ${selectedData.sections.join(', ')}\n` +
-          `Total Students: ${selectedData.totalStudents}\n\n` +
-          `✅ Hall tickets have been released successfully!`);
+        // Update hall ticket status
+        this.toggleHallTicket(this.selectedExamSeriesForRelease!.id);
 
-    // Close modal
-    this.closeReleaseModal();
+        // Show success message
+        alert(`🎫 Hall Tickets Released!\n\n` +
+              `Exam Series: ${this.selectedExamSeriesForRelease!.name}\n` +
+              `Branches: ${requestData.branches.join(', ')}\n` +
+              `Sections: ${requestData.sections.join(', ')}\n` +
+              `Total Students: ${response.totalStudents}\n\n` +
+              `✅ ${response.message}`);
+
+        // Close modal
+        this.closeReleaseModal();
+      },
+      error: (error) => {
+        console.error('Error releasing hall tickets:', error);
+        
+        if (error.status === 401) {
+          this.errorMessage = 'Session expired. Please login again.';
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 2000);
+        } else {
+          const errorMsg = error.error?.message || 'Failed to release hall tickets. Please try again.';
+          alert(`❌ Error: ${errorMsg}`);
+        }
+      }
+    });
   }
 
   toggleHallTicket(examSeriesId: string): void {

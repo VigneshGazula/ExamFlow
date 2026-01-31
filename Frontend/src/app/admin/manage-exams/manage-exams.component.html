@@ -354,7 +354,15 @@
             <span class="filter-tag" *ngFor="let section of selectedSections">Section {{ section }}</span>
           </div>
 
-          <div class="students-list">
+          <!-- Loading Students -->
+          <div class="loading-students" *ngIf="isLoadingStudents">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading students...</span>
+            </div>
+            <p>Loading students...</p>
+          </div>
+
+          <div class="students-list" *ngIf="!isLoadingStudents">
             <label 
               *ngFor="let student of getFilteredStudents()" 
               class="selection-item student-item"
@@ -365,11 +373,11 @@
                 (change)="toggleStudentSelection(student.id)">
               <div class="student-info">
                 <div class="student-avatar">
-                  <span>{{ student.name.charAt(0) }}</span>
+                  <span>{{ student.fullName.charAt(0) }}</span>
                 </div>
                 <div class="student-details">
-                  <span class="student-name">{{ student.name }}</span>
-                  <span class="student-meta">{{ student.rollNumber }} • {{ student.branch }} • Section {{ student.section }}</span>
+                  <span class="student-name">{{ student.fullName }}</span>
+                  <span class="student-meta">{{ student.rollNumber }} • {{ student.department }} • Section {{ student.section }}</span>
                 </div>
               </div>
               <i class="bi bi-check-circle-fill check-icon"></i>

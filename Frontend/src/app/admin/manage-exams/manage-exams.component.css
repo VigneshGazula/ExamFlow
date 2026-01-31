@@ -644,6 +644,22 @@ h2 {
   gap: 0.75rem;
 }
 
+/* Loading Students */
+.loading-students {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.loading-students p {
+  margin-top: 1rem;
+  color: #667eea;
+  font-weight: 600;
+}
+
 .students-list::-webkit-scrollbar {
   width: 8px;
 }
