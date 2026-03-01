@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examination Hall Ticket</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            border: 3px solid #000;
+            padding: 0;
+        }
+
+        .header {
+            background-color: white;
+            padding: 20px;
+            border-bottom: 2px solid #000;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background-color: #1a5f3c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .logo-text {
+            flex: 1;
+        }
+
+        .logo-text h1 {
+            color: #c41e3a;
+            font-size: 42px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .logo-text .marri {
+            font-size: 28px;
+        }
+
+        .institute-name {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 10px 0 5px 0;
+        }
+
+        .institute-subtitle {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 3px;
+        }
+
+        .exam-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            padding: 10px;
+            background-color: white;
+            border-bottom: 2px solid #000;
+        }
+
+        .main-content {
+            background-color: #d3d3d3;
+            padding: 0;
+        }
+
+        .hallticket-header {
+            background-color: #808080;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+
+        .student-info {
+            padding: 15px 20px;
+            background-color: white;
+        }
+
+        .info-left {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .info-row {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .info-label {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .info-value {
+            font-size: 14px;
+        }
+
+        .exam-schedule {
+            margin: 10px 20px 20px 20px;
+            background-color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid #000;
+        }
+
+        th {
+            background-color: white;
+            border: 1px solid #000;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        td {
+            border: 1px solid #000;
+            padding: 10px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .signature-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            padding: 30px 20px;
+            background-color: white;
+            border-top: 2px solid #000;
+        }
+
+        .signature-left {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .signature-right {
+            text-align: right;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .instructions {
+            padding: 20px;
+            background-color: white;
+            border-top: 2px solid #000;
+        }
+
+        .instructions h3 {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .instructions ol {
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 12px;
+            font-size: 12px;
+            line-height: 1.5;
+            text-align: justify;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+                background-color: white;
+            }
+            .container {
+                border: 3px solid #000;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <img src="mlrit_logo.png" alt="MLR Institute of Technology" style="max-width: 100%; height: auto; margin-bottom: 10px;">
+        </div>
+
+        <!-- Exam Title -->
+        <div class="exam-title">
+            {{EXAM_SERIES_NAME}}
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="hallticket-header">
+                {{DEPARTMENT}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; HALLTICKET
+            </div>
+
+            <!-- Student Information -->
+            <div class="student-info">
+                <div class="info-left">
+                    <div class="info-row">
+                        <div class="info-label">Hall Ticket No:</div>
+                        <div class="info-value">{{HALL_TICKET_NO}}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Name:</div>
+                        <div class="info-value">{{STUDENT_NAME}}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exam Schedule Table -->
+            <div class="exam-schedule">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Course Code</th>
+                            <th>Registered Courses</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic exam rows will be inserted here by backend -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Signature Section -->
+            <div class="signature-section">
+                <div class="signature-left">Signature of Student</div>
+                <div class="signature-right">Controller of Examinations</div>
+            </div>
+        </div>
+
+        <!-- Instructions Section -->
+        <div class="instructions">
+            <h3>INSTRUCTIONS</h3>
+            <ol>
+                <li>Student should be present in the Examination Hall 15 minutes before the commencement of Examinations. No student will be allowed into the Examination Hall after the commencement.</li>
+                
+                <li>Student is prohibited from bringing any books, notebooks, loose sheets of paper or mathematical tables to the Examination Hall. The mathematical table will be supplied by the Chief Controller of Examinations upon request / whenever required. Mathematical instruments will however be allowed to be brought in.</li>
+                
+                <li>Student is prohibited from bringing Mobile Phones / Cameras / Bluetooth Devices / Programmable calculators etc., to the Examination Hall.</li>
+                
+                <li>Student is prohibited from talking to each other, copy or communicate with any person outside the Examination Hall. If a student is found violating these rules / committing any other malpractice / behaving in an undisciplined manner / causing disturbance to the other student, he will be expelled from the Examination Hall. He will not be allowed to sit for the remaining papers and is liable to be rusticated.</li>
+                
+                <li>Student is instructed to bring his hall ticket and ID Card every day to the Examination Hall and present it for inspection whenever demanded. Otherwise he is liable to be sent out of the Examination Hall.</li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>
